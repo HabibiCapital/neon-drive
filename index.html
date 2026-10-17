@@ -431,7 +431,9 @@ body.touch .hgrid .k,body:not(.touch) .hgrid .t{opacity:.6}
 {"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
 </script>
 <script>
-window.addEventListener('error',e=>{const m=String(e.message||e);if(/resolve module specifier|does not resolve|bare specifier|importmap/i.test(m))return;const d=document.getElementById('err')||Object.assign(document.createElement('div'),{id:'err'});d.textContent='Error: '+m+'\n'+(e.filename||'')+':'+(e.lineno||'');document.body.appendChild(d);setTimeout(()=>d.remove(),9000)});
+// only the game's own errors get the on-screen box: in-app browsers (X, Instagram…) inject their own scripts, and their
+// failures arrive as a detail-free cross-origin "Script error." that says nothing about the game
+window.addEventListener('error',e=>{const m=String(e.message||e),f=String(e.filename||'');if(/resolve module specifier|does not resolve|bare specifier|importmap/i.test(m))return;if(/^Script error\.?$/i.test(m)||!f||!(f.indexOf(location.origin)===0||/cdn\.jsdelivr\.net|ga\.jspm\.io/.test(f)))return;const d=document.getElementById('err')||Object.assign(document.createElement('div'),{id:'err'});d.textContent='Error: '+m+'\n'+(e.filename||'')+':'+(e.lineno||'');document.body.appendChild(d);setTimeout(()=>d.remove(),9000)});
 </script>
 <script type="module">
 import * as THREE from 'three';
