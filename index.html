@@ -142,6 +142,7 @@ body.airborne.t-lift #touch #tBrake .l2,body.airborne.t-lift #touch #tHand .l2,b
 body.airborne.t-lift #touch #tGas{border-color:var(--pink);box-shadow:0 0 18px rgba(255,47,163,.6);font-size:18px}
 body.airborne.t-lift #touch #tHand{border-color:#ff7a2a;box-shadow:0 0 14px rgba(255,122,42,.5)}
 body.touch.airborne.t-lift #prompt{display:none}
+body.airborne.t-lift #touch #tLift:not(.on){display:none}
 #touch #tFlipL,#touch #tFlipR{display:none;width:54px;height:54px;font:900 26px/1 var(--f);border-color:#b98cff;box-shadow:0 0 14px rgba(157,92,255,.5);bottom:calc(var(--tb) + 146px)}
 #touch #tFlipL{left:var(--tl)}#touch #tFlipR{left:calc(var(--tl) + 74px)}
 body.airborne.t-lift #touch #tFlipL,body.airborne.t-lift #touch #tFlipR{display:flex}
@@ -392,7 +393,8 @@ body.touch .hgrid .k,body:not(.touch) .hgrid .t{opacity:.6}
     <div class="hr"><b>Drift<small>hold while steering</small></b><span class="k"><kbd>Space</kbd></span><span class="t"><i>DRIFT</i></span></div>
     <div class="hs">THRUSTERS &middot; COLD N&#8322;</div>
     <div class="hr"><b>Boost<small>4 rear nozzles</small></b><span class="k"><kbd>Shift</kbd></span><span class="t"><i>BOOST</i></span></div>
-    <div class="hr"><b>Lift / climb<small>4 down nozzles, one behind each wheel</small></b><span class="k"><kbd>F</kbd></span><span class="t"><i>LIFT</i> · <i>UP</i> in the air</span></div>
+    <div class="hr"><b>Lift (hop)<small>raw power on the 4 down nozzles, one behind each wheel</small></b><span class="k"><kbd>F</kbd></span><span class="t"><i>LIFT</i> on the ground</span></div>
+    <div class="hr"><b>Up (fly)<small>in the air: the flight computer takes over and climbs</small></b><span class="k"><kbd>G</kbd> then <kbd>F</kbd></span><span class="t"><i>UP</i></span></div>
     <div class="hr"><b>Fly / hover<small>flight computer holds you steady</small></b><span class="k"><kbd>G</kbd></span><span class="t"><i>FLY</i> · <i>HOVER</i></span></div>
     <div class="hr"><b>Land / descend<small>stops, comes down, flares</small></b><span class="k"><kbd>X</kbd></span><span class="t"><i>DOWN</i></span></div>
     <div class="hr"><b>MAX pressure<small>double thrust, double gas: catch a fall</small></b><span class="k"><kbd>Z</kbd></span><span class="t"><i>MAX</i></span></div>
@@ -400,6 +402,7 @@ body.touch .hgrid .k,body:not(.touch) .hgrid .t{opacity:.6}
     <div class="hs">HOVERING</div>
     <div class="hr"><b>Fly forward<small>4 rear nozzles push, the car stays level</small></b><span class="k"><kbd>W</kbd></span><span class="t">stick &uarr;</span></div>
     <div class="hr"><b>Turn<small>the 2 nose side jets</small></b><span class="k"><kbd>A</kbd><kbd>D</kbd></span><span class="t">stick &larr; &rarr;</span></div>
+    <div class="hr"><b>Power turn<small>hold MAX while turning: banks hard, double gas</small></b><span class="k"><kbd>Z</kbd>+<kbd>A</kbd><kbd>D</kbd></span><span class="t"><i>MAX</i> + stick</span></div>
     <div class="hr"><b>Slide sideways<small>rolls the car</small></b><span class="k"><kbd>Space</kbd>+<kbd>A</kbd><kbd>D</kbd></span><span class="t">&mdash;</span></div>
     <div class="hs">IN THE AIR (NO HOVER)</div>
     <div class="hr"><b>Roll</b><span class="k"><kbd>A</kbd><kbd>D</kbd></span><span class="t">stick &larr; &rarr;</span></div>
@@ -2973,24 +2976,25 @@ function stepAir(dt, inp) {
     // Sideways stick turns the car on the 2 nose jets; with SLIDE (the DRIFT button) held it slides sideways by rolling.
     const slide = inp.hb, sF = Math.abs(inp.thr) > 0.08 ? inp.thr : 0, sS = Math.abs(inp.steer) > 0.08 ? inp.steer : 0;
     const vTf = inp.boost ? Math.max(vf, 30) : sF > 0 ? sF * sF * 30 : sF * 8, vTr = slide ? sS * 8 : 0; // forward curve: small pushes for fine positioning, full stick = 30 m/s
-    const aF = clamp(1.6 * (vTf - vf), -6, 9), aR = clamp(1.8 * (vTr - vr), -6, 6);
+    const power = inp.max && !slide && Math.abs(sS) > 0.08; // MAX + turn: power turn, double lift lets it bank to ~55 deg so the path follows the nose
+    const aF = clamp(1.6 * (vTf - vf), -6, 9), aR = clamp((power ? 2.4 : 1.8) * (vTr - vr), power ? -13 : -6, power ? 13 : 6);
     const rearMax = 4 * (T.rearT || 0) * Math.max(0.05, gasAvail()) * c.press;
     let aTilt = aF; if (aF > 0 && rearMax) { boostCmd = clamp(m * aF / rearMax, 0, 1); aTilt = 0; }
     // vertical first: while the climb/descent rate is far off target, keep the car nearly level so all lift goes up
     // ...and flare level near the ground so the wheels touch down flat
-    const tiltCap = (vsT - c.vy > 2.5 && c.vy < -3 ? 0.1 : 0.45) * clamp(0.12 + agl / 4, 0.12, 1);
+    const tiltCap = (vsT - c.vy > 2.5 && c.vy < -3 ? 0.1 : power ? 0.95 : 0.45) * clamp(0.12 + agl / 4, 0.12, 1);
     // tilt is limited as one vector (like a drone), so braking on both axes cannot ask for ~1.4x the safe lean and saturate the lift nozzles
     let pitchT = Math.atan(aTilt / PHYS.G), rollT = Math.atan(aR / PHYS.G); { const tn = Math.hypot(pitchT, rollT); if (tn > tiltCap) { pitchT *= tiltCap / tn; rollT *= tiltCap / tn; } }
     // heading: the stick turns the car on the nose jets (gentler at speed); otherwise the jets hold the heading,
     // because pitch/roll corrections couple into yaw
     const turn = slide ? 0 : sS;
     if (H.hdg == null || Math.abs(turn) > 0.02) H.hdg = c.h;
-    const yawT = turn ? -turn * Math.min(0.9, 4.5 / Math.max(5, Math.abs(vf))) : clamp(3 * angDiff(c.h, H.hdg), -PHYS.RATE.y, PHYS.RATE.y);
+    const yawT = turn ? -turn * (power ? Math.min(1.6, Math.max(4.5, 0.7 * PHYS.G * Math.tan(tiltCap)) / Math.max(5, Math.hypot(vf, vr))) : Math.min(0.9, 4.5 / Math.max(5, Math.abs(vf)))) : clamp(3 * angDiff(c.h, H.hdg), -PHYS.RATE.y, PHYS.RATE.y);
     _wd.set(clamp(PHYS.LEVEL * 1.4 * (pitchT + ePitch), -2.5, 2.5), yawT, clamp(PHYS.LEVEL * 1.4 * (rollT - eRoll), -2.5, 2.5));
     const tilt = Math.acos(clamp(_bv.y, 0.3, 1)), aZ = PHYS.G + 2.6 * (vsT - c.vy);
     const need = m * aZ / Math.cos(tilt) / (3.6 * T.liftT * Math.max(0.05, gasAvail()));
-    if (need > 1 && gasAvail() > 0.5) c.press = Math.max(c.press, Math.min(1.8, need)); // catching a fall: the computer opens the regulator
-    liftCmd = clamp(need / c.press, 0, 1);
+    if (need > 1 && gasAvail() > 0.5) c.press = Math.max(c.press, Math.min(inp.lift ? 2 : 1.8, need)); // catching a fall: the computer opens the regulator
+    liftCmd = _bv.y > 0.3 ? clamp(need / c.press, 0, 1) : 0; // upside down: right it first, lift once it pushes up
     H.vsT = vsT; c.assistT = 0;
   } else if (manual) { c.assistT = 0; _wd.set(pin * PHYS.RATE.x, -yawIn * PHYS.RATE.y, rollIn * PHYS.RATE.z); }
   else { c.assistT += dt; if (S.assist !== false && c.assistT > 0.2) _wd.set(clamp(PHYS.LEVEL * ePitch, -PHYS.RATE.x, PHYS.RATE.x), 0, clamp(-PHYS.LEVEL * eRoll, -PHYS.RATE.z, PHYS.RATE.z)); }
@@ -3673,7 +3677,9 @@ addEventListener('blur', () => { for (const k in keys) keys[k] = false; });
   for (const [el, d] of [['tFlipL', -1], ['tFlipR', 1]]) { const b = $(el); if (b) b.addEventListener('pointerdown', e => { inp.flipTap = d; b.classList.add('on'); setTimeout(() => b.classList.remove('on'), 180); e.preventDefault(); }); }
   for (const [el, k] of [['tGas', 'gas'], ['tBrake', 'brake'], ['tHand', 'hand'], ['tBoost', 'boost'], ['tLift', 'lift']]) {
     const b = $(el);
-    b.addEventListener('pointerdown', e => { touchIn[k] = true; touchIn[k + 'Air'] = !!((car.air || car.hover) && car.trim.lift); b.classList.add('on'); try { b.setPointerCapture(e.pointerId); } catch (err) { } e.preventDefault(); });
+    b.addEventListener('pointerdown', e => { touchIn[k] = true; touchIn[k + 'Air'] = !!((car.air || car.hover) && car.trim.lift);
+      if (k === 'gas' && touchIn.gasAir && car.air && !car.hover && car.trim.att && S.assist !== false && (!car.flipM || car.flipM.phase === 'catch') && _uv.set(0, 1, 0).applyQuaternion(car.q).y > 0.6 && !(mission && mission.type === 'hoverslam')) inp.hoverTap = true; // UP = fly: hover takes over (right side up, assist on)
+      b.classList.add('on'); try { b.setPointerCapture(e.pointerId); } catch (err) { } e.preventDefault(); });
     const up = () => { touchIn[k] = false; b.classList.remove('on'); };
     b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up); b.addEventListener('lostpointercapture', up);
   }
@@ -4195,7 +4201,7 @@ function updateStunt(dt) {
   if (m.state === 'reset') { m.resetT -= dt; if (m.resetT <= 0) { respawnCar(...m.home); car.tank = tankCap(); camS.init = false; m.state = m.type === 'launch' ? 'stage' : 'go'; m.t = 0; m.tree = 0; m.z60 = m.et = 0; setTree(-1); } return; }
   if (m.type === 'loop') {
     $('mTitle').textContent = 'SUCTION LOOP';
-    $('mInfo').textContent = car.rail ? (car.rail.phi < 1.3 ? 'Fan suction on · ease off to hang on the wall' : car.rail.phi < 2.9 ? 'Throttle over the top!' : 'Upside down…') : car.air ? `Roll upright · ${isTouch ? 'UP' : 'F'} to cushion` : car.speed > 9 ? `Too fast! Roll in under 20 mph · try ${m.tries}` : `Roll into the curl slowly · try ${m.tries}`;
+    $('mInfo').textContent = car.rail ? (car.rail.phi < 1.3 ? 'Fan suction on · ease off to hang on the wall' : car.rail.phi < 2.9 ? 'Throttle over the top!' : 'Upside down…') : car.air ? `Roll upright · ${isTouch ? 'UP to catch it, DOWN to land' : 'F to cushion'}` : car.speed > 9 ? `Too fast! Roll in under 20 mph · try ${m.tries}` : `Roll into the curl slowly · try ${m.tries}`;
   } else if (m.type === 'kick') {
     $('mTitle').textContent = 'KICKFLIP LINEUP';
     $('mInfo').textContent = car.air ? `Roll ${Math.round(Math.abs(car.rollAcc) * 57.3)}°` : `${Math.round(car.speed * 2.237)} mph — hop at 50+ before the lineup · try ${m.tries}`;
@@ -4223,7 +4229,7 @@ function landed(d) {
   if (AUTO) { SFX.crash(Math.min(0.5, -d.vy / 30)); return; } // the reveal autopilot scores nothing for the player
   const air = Math.max(0, d.airT - (d.liftT || 0)), dist = d.from ? Math.hypot(car.x - d.from.x, car.z - d.from.z) : 0, ok = !d.hard, inStunt = wasChal || !!(mission && mission.stunt);
   SFX.crash(Math.min(0.5, -d.vy / 30));
-  if (!ok) { popScore('WIPEOUT', '#ff4060'); breakCombo(); if (mission && mission.stunt && mission.state === 'go') failStunt(d.up < 0.35 ? (d.kind === 'loop' ? 'Roll upright before touchdown' : 'Land it on the wheels') : `Too fast (${d.td.vTd.toFixed(0)} m/s) — cushion with ${isTouch ? 'UP or HOVER' : 'F (lift) or G (hover)'}`); return; }
+  if (!ok) { popScore('WIPEOUT', '#ff4060'); breakCombo(); if (mission && mission.stunt && mission.state === 'go') failStunt(d.up < 0.35 ? (d.kind === 'loop' ? 'Roll upright before touchdown' : 'Land it on the wheels') : `Too fast (${d.td.vTd.toFixed(0)} m/s) — cushion with ${isTouch ? 'UP (hover), then DOWN' : 'F (lift) or G (hover)'}`); return; }
   const rolls = Math.floor(Math.abs(d.roll) / (Math.PI * 2) + 0.15), flips = Math.floor(Math.abs(d.pitch) / (Math.PI * 2) + 0.15), half = !rolls && Math.abs(d.roll) > Math.PI * 0.8;
   let pts = 0; const label = [];
   if (air > 0.55) { pts += Math.round(air * 380 + dist * 6); ST.jumps++; ST.bestAir = Math.max(ST.bestAir, air); }
@@ -4541,8 +4547,9 @@ function updateFlightDeck(dt) {
   } else FD.mark.visible = false;
   // first-time teaching moments
   if (T.lift && c.air && !AUTO) {
-    if (!c.hover && c.airT > 0.6) showHint(`Falling? Hold ${K('F', 'UP')} to fire the 4 downward nozzles, add ${K('Z', 'MAX')} for double thrust. Tap ${K('G', 'HOVER')} and the flight computer holds you steady.`, 7, 'lift');
+    if (!c.hover && c.airT > 0.6) showHint(isTouch && !(mission && mission.type === 'hoverslam') && S.assist !== false ? `Falling? Tap ${K('F', 'UP')}: the flight computer catches you and holds your height · hold ${K('F', 'UP')} to climb · ${K('X', 'DOWN')} lands` : `Falling? Hold ${K('F', 'UP')} to fire the 4 downward nozzles, add ${K('Z', 'MAX')} for double thrust. Tap ${K('G', 'HOVER')} and the flight computer holds you steady.`, 7, 'lift');
     if (c.airT > 1.4 && !c.flipM) showHint(`Quick flip: ${K('Q / E', '⟲ / ⟳')} pops the car up and rolls it a clean 360°, like the reveal.`, 5, 'flip');
+    if (c.hover && c.speed > 12 && FD.seen.hover && hintT <= 0) showHint(`Turn quicker: hold ${K('Z', 'MAX')} while you turn for a power turn: it banks hard on double thrust.`, 6, 'pturn');
     if (c.hover) showHint(`HOVER: ${K('W', 'stick ↑')} flies forward on the 4 rear nozzles, level · ${K('A / D', 'stick ← →')} turns on the nose jets · let go to stop · ${K('F', 'UP')} climb · ${K('X', 'DOWN')} lands${isTouch ? '' : ' · Space + A / D slides'}`, 8, 'hover');
     if (!c.hover && inp.lift && Math.abs(inp.thr) > 0.5 && c.airT > 0.5) showHint(`To fly forward and stay level, tap ${K('G', 'HOVER')}: then ${K('W', 'stick ↑')} pushes on the rear nozzles while the flight computer holds your height. Without hover the stick tips the car (flips).`, 7, 'fwd');
   }
@@ -4594,7 +4601,7 @@ function buildChallengeProps() {
   const mk = (r, col) => { const m = new THREE.Mesh(new THREE.TorusGeometry(r, 0.22, 8, 40), neonMat(col, 1.2)); m.visible = false; scene.add(m); return m; };
   ringMeshes = RINGS.map(() => mk(4, 0x9d5cff));
   holdRing = mk(2.6, 0xff2fa3); holdRing.rotation.x = Math.PI / 2;
-  { const g = new THREE.ConeGeometry(0.5, 1.4, 4); g.rotateX(Math.PI / 2); guide = new THREE.Mesh(g, neonMat(0x4dff9a, 1.6)); guide.visible = false; scene.add(guide); }
+  { const g = new THREE.ConeGeometry(0.5, 1.4, 4); g.rotateX(Math.PI / 2); guide = new THREE.Mesh(g, neonMat(0x4dff9a, 0.55)); g.scale(0.75, 0.75, 0.75); guide.visible = false; scene.add(guide); }
   // menu section
   const menu = $('menu'), first = $('mQuit') || $('mResume'), sec = document.createElement('div');
   sec.innerHTML = `<div class="lab" style="margin:10px 0 2px;color:var(--cyan)">ROADSTER CHALLENGES</div>` + Object.entries(CHALLENGES).map(([k, ch]) => `<button class="mbtn m chal" data-m="${k}">${ch.name} <small id="bs_${k}"></small></button>`).join('');
@@ -4608,12 +4615,15 @@ function buildChallengeProps() {
   lbl(); FD.menuLbl = lbl;
   sec.querySelectorAll('.m').forEach(b => b.addEventListener('click', () => { togglePause(false); startMission(b.dataset.m); }));
 }
+const HOVER_START = ['padhop', 'roof', 'barge', 'hoverhold', 'rings']; // flying challenges begin in hover at 3 m
+function chalHover(type) { if (HOVER_START.includes(type) && car.trim.att && !car.hover) toggleHover(); }
 function startChallenge(type) {
   const ch = CHALLENGES[type]; breakCombo(); clearHeat(); for (const c of [...CHASERS]) removeChaser(c);
   if (car.trim.id !== ch.trim) setTrim(ch.trim, false); else car.tank = tankCap();
   const p = ch.at(); respawnCar(p[0], p[1], p[2]); camS.init = false;
   if (ch.drop) { car.y += ch.drop; car.lastG = car.y; takeOff('drop'); }
   mission = { type, chal: true, t: 0, score: 0, state: 'go', step: 0, s: { boostT: 0, tdriftT: 0, rolled: false, landedOn: null, holdT: 0, ring: 0, burns: 0, lp: 0 }, tries: 1 };
+  chalHover(type);
   for (const m of ringMeshes) m.visible = false; holdRing.visible = false;
   if (type === 'rings') RINGS.forEach((r, i) => { const m = ringMeshes[i]; m.position.set(r[0], groundAt(r[0], r[1], 30) + r[2], r[1]); const nx = RINGS[i + 1] || [PADS.hover.x, PADS.hover.z]; m.rotation.set(0, Math.atan2(nx[0] - r[0], nx[1] - r[1]), 0); m.visible = true; });
   if (type === 'hoverhold') { holdRing.position.set(PADS.hover.x, PADS.hover.y + 8, PADS.hover.z); holdRing.visible = true; }
@@ -4628,7 +4638,7 @@ function endChallenge(medal, score, sub) {
   bigMsg(medal ? medal + ' MEDAL' : 'COMPLETE', sub + (better ? ' · NEW BEST' : ''), 3.4, MEDAL_COL[medal]);
   mission = null; $('mBox').classList.add('hidden'); for (const r of ringMeshes) r.visible = false; holdRing.visible = false; guide.visible = false;
 }
-function failChallenge(why) { const ch = CHALLENGES[mission.type]; mission.tries++; bigMsg('TRY AGAIN', why, 1.6, '#ff4060'); const p = ch.at(); respawnCar(p[0], p[1], p[2]); car.tank = tankCap(); camS.init = false; mission.t = 0; mission.s = { boostT: 0, tdriftT: 0, rolled: false, landedOn: null, holdT: 0, ring: 0, burns: 0, lp: 0 }; if (ch.drop) { car.y += ch.drop; car.lastG = car.y; takeOff('drop'); } }
+function failChallenge(why) { const ch = CHALLENGES[mission.type]; mission.tries++; bigMsg('TRY AGAIN', why, 1.6, '#ff4060'); const p = ch.at(); respawnCar(p[0], p[1], p[2]); car.tank = tankCap(); camS.init = false; mission.t = 0; mission.s = { boostT: 0, tdriftT: 0, rolled: false, landedOn: null, holdT: 0, ring: 0, burns: 0, lp: 0 }; if (ch.drop) { car.y += ch.drop; car.lastG = car.y; takeOff('drop'); } chalHover(mission.type); }
 function updateChallenge(dt) {
   const m = mission, ch = CHALLENGES[m.type], c = car, s = m.s; m.t += dt;
   if (m.failWhy) { const w = m.failWhy; m.failWhy = null; failChallenge(w); return; }
