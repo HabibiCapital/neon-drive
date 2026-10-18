@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="neon-drive-version" content="5">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#1b0a33">
 <meta name="mobile-web-app-capable" content="yes">
@@ -11,16 +12,16 @@
 <title>Neon Drive — Tesla Roadster</title>
 <meta name="description" content="Fly, land and kickflip the new Tesla Roadster through a neon coastal city. The Oct 15 reveal demos, recreated in your browser. A fan-made tribute.">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://habibicapital.github.io/neon-drive/">
 <meta property="og:title" content="Neon Drive — Tesla Roadster">
 <meta property="og:description" content="The Oct 15 Roadster reveal, recreated: suction loop, kickflip over the lineup, 0–60 in 0.81 s, thruster hover. Drive it, fly it, land it. Fan-made, plays in your browser.">
 <meta property="og:image" content="https://habibicapital.github.io/neon-drive/og.jpg">
-<meta property="og:url" content="https://habibicapital.github.io/neon-drive/">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="A white Tesla Roadster hovering on cold-gas thrusters over a neon coastal city at night">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:site" content="@HabibiCapital">
-<meta name="twitter:creator" content="@HabibiCapital">
+<meta name="twitter:site" content="@habibicapital_">
+<meta name="twitter:creator" content="@habibicapital_">
 <meta name="twitter:title" content="Neon Drive — Tesla Roadster">
 <meta name="twitter:description" content="The Oct 15 Roadster reveal demos, recreated. Drive it, fly it, land it, kickflip it. Fan-made, plays in your browser.">
 <meta name="twitter:image" content="https://habibicapital.github.io/neon-drive/og.jpg">
@@ -135,22 +136,19 @@ body.touch .touchonly{display:block}body.touch .deskonly{display:none}
 #touch #tLift{right:calc(var(--tr) + 90px);bottom:calc(var(--tb) + 83px);width:66px;height:66px;border-color:var(--pink);display:none}
 #touch #tHover{right:calc(var(--tr) + 169px);bottom:calc(var(--tb) + 86px);width:56px;height:56px;font-size:11px;border-color:#ffe45c;display:none}
 body.t-boost #touch #tBoost,body.t-lift #touch #tLift,body.t-lift #touch #tHover{display:flex}
-/* in the air (Rocket) the right thumb flies: GAS = UP, BRAKE = DOWN, DRIFT = MAX, LIFT folds into UP, flips appear */
+/* every button keeps its name in the air; the Rocket's BRAKE adds a small "LAND" line, flips are always there */
 body.airborne:not(.t-lift) #touch #tGas{opacity:.32;box-shadow:none}
-body.airborne.t-lift #touch #tBrake .l1,body.airborne.t-lift #touch #tHand .l1,body.airborne.t-lift #touch #tGas .l1,body.airborne #touch #tHover .l1{display:none}
-body.airborne.t-lift #touch #tBrake .l2,body.airborne.t-lift #touch #tHand .l2,body.airborne.t-lift #touch #tGas .l2,body.airborne #touch #tHover .l2{display:inline}
-body.airborne.t-lift #touch #tGas{border-color:var(--pink);box-shadow:0 0 18px rgba(255,47,163,.6);font-size:18px}
-body.airborne.t-lift #touch #tHand{border-color:#ff7a2a;box-shadow:0 0 14px rgba(255,122,42,.5)}
+body.airborne.t-lift #touch #tBrake{flex-direction:column;gap:3px}
+body.airborne.t-lift #touch #tBrake .l2{display:block;font-size:8px;letter-spacing:.03em;color:#ffc2cf}
+body.slam.airborne.t-lift #touch #tBrake .l2{display:none}
 body.touch.airborne.t-lift #prompt{display:none}
-body.airborne.t-lift #touch #tLift:not(.on){display:none}
 #touch #tFlipL,#touch #tFlipR{display:none;width:54px;height:54px;font:900 26px/1 var(--f);border-color:#b98cff;box-shadow:0 0 14px rgba(157,92,255,.5);bottom:calc(var(--tb) + 146px)}
 #touch #tFlipL{left:var(--tl)}#touch #tFlipR{left:calc(var(--tl) + 74px)}
-body.airborne.t-lift #touch #tFlipL,body.airborne.t-lift #touch #tFlipR{display:flex}
+body.t-lift #touch #tFlipL,body.t-lift #touch #tFlipR{display:flex}
 #joyLbl{position:absolute;left:0;right:0;bottom:9px;text-align:center;white-space:pre-line;font:800 9px/1.15 var(--f);letter-spacing:.06em;color:rgba(255,255,255,.75);pointer-events:none;text-shadow:0 0 4px #000}
-body.airborne.t-lift #touch #tBrake{font-size:10px;letter-spacing:0;border-color:#ff8aa0}
 body.hovering #touch #tHover{background-color:rgba(255,228,92,.3);border-color:#fff;box-shadow:0 0 22px #ffe45c,inset 0 0 14px rgba(255,228,92,.55);text-shadow:0 0 8px #ffe45c}
 body.touch #speedo{left:50%;transform:translateX(-50%);width:112px;height:112px;bottom:var(--tb)}
-@media (orientation:landscape){body.touch #prompt{left:var(--tl);bottom:calc(var(--tb) + 142px);transform:none}}
+@media (orientation:landscape){body.touch #prompt{left:var(--tl);bottom:calc(var(--tb) + 142px);transform:none}body.touch.t-lift #prompt{bottom:calc(var(--tb) + 146px);left:calc(var(--tl) + 140px)}}
 html body.touch #tdCard{pointer-events:none}
 /* letterbox */
 #lb{position:fixed;inset:0;z-index:15;pointer-events:auto}
@@ -320,8 +318,8 @@ body.touch .hgrid .k,body:not(.touch) .hgrid .t{opacity:.6}
       <p class="n2i" id="n2Info"></p>
       <button id="startBtn" class="big" disabled>LOADING CITY&hellip;</button><div class="quick" style="display:flex;gap:8px;justify-content:center;margin:8px 0 2px"><button id="qDemo" class="chip" style="flex:1">&#9654; Watch the Reveal</button><button id="qSchool" class="chip" style="flex:1">&#9992;&#65038; Flight School</button></div>
       <div class="opts"><label>Quality <select id="qSel"><option value="auto">Auto</option><option value="high">High</option><option value="low">Low</option></select></label><button id="tiHelp" class="chip sm">? Controls</button></div>
-      <p class="keys deskonly">WASD drive &middot; <b>Space</b> drift &middot; <b>Shift</b> boost &middot; <b>F</b> lift &middot; <b>G</b> hover &middot; <b>X</b> descend<br>Hovering: W forward &middot; A D turn &middot; <b>Q E</b> quick flips &middot; <b>Z</b> MAX &middot; <b>?</b> all controls</p>
-      <p class="keys touchonly">Stick steers &middot; GAS / BRAKE &middot; DRIFT &middot; BOOST &middot; LIFT &middot; <b>FLY</b><br>In the air: stick flies &middot; GAS = UP &middot; BRAKE = DOWN &middot; DRIFT = MAX &middot; &#10226; &#10227; flips</p>
+      <p class="keys deskonly">WASD drive &middot; <b>Space</b> drift &middot; <b>Shift</b> boost &middot; <b>F</b> lift &middot; <b>G</b> hover &middot; <b>X</b> land<br>In the air: W forward &middot; A D turn &middot; Space + A D air drift &middot; <b>Q E</b> quick flips &middot; <b>?</b> all controls</p>
+      <p class="keys touchonly">Stick steers &middot; GAS / BRAKE &middot; DRIFT &middot; BOOST &middot; LIFT &middot; <b>FLY</b><br>In the air the stick flies &middot; LIFT up &middot; BRAKE lands &middot; DRIFT + turn = air drift &middot; &#10226; &#10227; flips</p>
     </div>
     <p class="disc">Fan-made tribute &middot; not affiliated with Tesla or SpaceX</p>
   </div>
@@ -347,7 +345,7 @@ body.touch .hgrid .k,body:not(.touch) .hgrid .t{opacity:.6}
 </div>
 <div id="msg"></div><div id="pops"></div>
 
-<div id="touch" class="hidden"><div id="joy"><div id="knob"></div><div id="joyLbl">STEER</div></div><button id="tHand"><span class="l1">DRIFT</span><span class="l2">MAX</span></button><button id="tBoost">BOOST</button><button id="tLift">LIFT</button><button id="tHover"><span class="l1">FLY</span><span class="l2">HOVER</span></button><button id="tBrake"><span class="l1">BRAKE</span><span class="l2">DOWN</span></button><button id="tGas"><span class="l1">GAS</span><span class="l2">UP</span></button><button id="tFlipL" aria-label="Flip left">&#10226;</button><button id="tFlipR" aria-label="Flip right">&#10227;</button></div>
+<div id="touch" class="hidden"><div id="joy"><div id="knob"></div><div id="joyLbl">STEER</div></div><button id="tHand">DRIFT</button><button id="tBoost">BOOST</button><button id="tLift">&#9650; LIFT</button><button id="tHover">FLY</button><button id="tBrake"><span class="l1">BRAKE</span><span class="l2">&#9660; LAND</span></button><button id="tGas">GAS</button><button id="tFlipL" aria-label="Flip left">&#10226;</button><button id="tFlipR" aria-label="Flip right">&#10227;</button></div>
 <div id="lb" class="hidden"><div class="t"></div><div class="b"><span>&#9654; REPLAY</span><em>tap to skip</em></div></div>
 <div id="demo" class="hidden"><div class="t"><span class="live">&#9679; LIVE</span><span>REVEAL DEMO &middot; RECREATED</span><b id="demoN"></b></div><div class="b"><div class="cap"><b id="demoT"></b><span id="demoC"></span></div><em id="demoR"></em><button id="demoSkip" class="chip">Skip &#9654;</button></div></div>
 <div id="fade"></div>
@@ -381,7 +379,7 @@ body.touch .hgrid .k,body:not(.touch) .hgrid .t{opacity:.6}
   <button class="mbtn" id="mHelp">&#10067; Controls <small>?</small></button>
   <button class="mbtn" id="mReset">Reset car to road</button>
   <button class="mbtn" id="mDriver">Change driver / handle</button>
-  <p class="keys deskonly">W/&uarr; gas &middot; S/&darr; brake &middot; A D steer &middot; Space drift &middot; Shift boost &middot; F lift &middot; G hover &middot; X descend &middot; air: A D roll, W S flip, Space+A D yaw &middot; C camera &middot; R radio &middot; H lights &middot; P photo &middot; V record &middot; E start mission &middot; Esc menu</p>
+  <p class="keys deskonly">W/&uarr; gas &middot; S/&darr; brake &middot; A D steer &middot; Space drift &middot; Shift boost &middot; F lift &middot; G hover &middot; X land &middot; air: W S fly / brake, A D turn, Space+A D air drift, Q E flips &middot; C camera &middot; R radio &middot; H lights &middot; P photo &middot; V record &middot; E start mission &middot; Esc menu</p>
 </div></div>
 <div id="help" class="modal hidden"><div class="box">
   <h2 class="neon">CONTROLS</h2>
@@ -393,28 +391,23 @@ body.touch .hgrid .k,body:not(.touch) .hgrid .t{opacity:.6}
     <div class="hr"><b>Drift<small>hold while steering</small></b><span class="k"><kbd>Space</kbd></span><span class="t"><i>DRIFT</i></span></div>
     <div class="hs">THRUSTERS &middot; COLD N&#8322;</div>
     <div class="hr"><b>Boost<small>4 rear nozzles</small></b><span class="k"><kbd>Shift</kbd></span><span class="t"><i>BOOST</i></span></div>
-    <div class="hr"><b>Lift (hop)<small>raw power on the 4 down nozzles, one behind each wheel</small></b><span class="k"><kbd>F</kbd></span><span class="t"><i>LIFT</i> on the ground</span></div>
-    <div class="hr"><b>Up (fly)<small>in the air: the flight computer takes over and climbs</small></b><span class="k"><kbd>G</kbd> then <kbd>F</kbd></span><span class="t"><i>UP</i></span></div>
-    <div class="hr"><b>Fly / hover<small>flight computer holds you steady</small></b><span class="k"><kbd>G</kbd></span><span class="t"><i>FLY</i> · <i>HOVER</i></span></div>
-    <div class="hr"><b>Land / descend<small>stops, comes down, flares</small></b><span class="k"><kbd>X</kbd></span><span class="t"><i>DOWN</i></span></div>
-    <div class="hr"><b>MAX pressure<small>double thrust, double gas: catch a fall</small></b><span class="k"><kbd>Z</kbd></span><span class="t"><i>MAX</i></span></div>
+    <div class="hr"><b>Lift<small>4 down nozzles: hop on the ground, climb in the air, stop a fall</small></b><span class="k"><kbd>F</kbd></span><span class="t"><i>LIFT</i></span></div>
+    <div class="hr"><b>Hover<small>take off and hold your height; tap again to let go</small></b><span class="k"><kbd>G</kbd></span><span class="t"><i>FLY</i></span></div>
+    <div class="hr"><b>Down &amp; land<small>in the air: stops, comes down, flares &middot; stick forward: descends while flying</small></b><span class="k"><kbd>X</kbd></span><span class="t"><i>BRAKE</i></span></div>
     <div class="hr"><b>Quick flip<small>pops up and rolls 360°, like the reveal</small></b><span class="k"><kbd>Q</kbd><kbd>E</kbd></span><span class="t"><i>&#10226;</i><i>&#10227;</i></span></div>
-    <div class="hs">HOVERING</div>
-    <div class="hr"><b>Fly forward<small>4 rear nozzles push, the car stays level</small></b><span class="k"><kbd>W</kbd></span><span class="t">stick &uarr;</span></div>
+    <div class="hs">IN THE AIR &middot; THE STICK ALWAYS FLIES</div>
+    <div class="hr"><b>Fly forward / brake<small>4 rear nozzles push, the car stays level</small></b><span class="k"><kbd>W</kbd><kbd>S</kbd></span><span class="t">stick &uarr; &darr; &middot; <i>GAS</i></span></div>
     <div class="hr"><b>Turn<small>the 2 nose side jets</small></b><span class="k"><kbd>A</kbd><kbd>D</kbd></span><span class="t">stick &larr; &rarr;</span></div>
-    <div class="hr"><b>Power turn<small>hold MAX while turning: banks hard, double gas</small></b><span class="k"><kbd>Z</kbd>+<kbd>A</kbd><kbd>D</kbd></span><span class="t"><i>MAX</i> + stick</span></div>
-    <div class="hr"><b>Slide sideways<small>rolls the car</small></b><span class="k"><kbd>Space</kbd>+<kbd>A</kbd><kbd>D</kbd></span><span class="t">&mdash;</span></div>
-    <div class="hs">IN THE AIR (NO HOVER)</div>
-    <div class="hr"><b>Roll</b><span class="k"><kbd>A</kbd><kbd>D</kbd></span><span class="t">stick &larr; &rarr;</span></div>
-    <div class="hr"><b>Flip (pitch)</b><span class="k"><kbd>W</kbd><kbd>S</kbd></span><span class="t">stick &uarr; &darr;</span></div>
-    <div class="hr"><b>Yaw<small>the 2 nose jets</small></b><span class="k"><kbd>Space</kbd>+<kbd>A</kbd><kbd>D</kbd></span><span class="t">&mdash;</span></div>
+    <div class="hr"><b>Air drift / slide<small>at speed the tail swings out and the car slides round, then grips &middot; slow, it slides sideways onto a pad</small></b><span class="k"><kbd>Space</kbd>+<kbd>A</kbd><kbd>D</kbd></span><span class="t"><i>DRIFT</i> + stick</span></div>
+    <div class="hr"><b>Extra thrust<small>the flight computer opens the regulator (MAX) when you need it</small></b><span class="k">auto</span><span class="t">auto</span></div>
+    <div class="hr"><b>Acro (experts)<small>menu &rarr; Flight assist OFF: the stick rolls and flips the car directly</small></b><span class="k">menu</span><span class="t">menu</span></div>
     <div class="hs">MORE</div>
     <div class="hr"><b>Camera &middot; radio &middot; lights</b><span class="k"><kbd>C</kbd><kbd>R</kbd><kbd>H</kbd></span><span class="t">&#127909; &#128251; &#128161;</span></div>
     <div class="hr"><b>Photo card &middot; 8 s clip</b><span class="k"><kbd>P</kbd><kbd>V</kbd></span><span class="t">&#128248; &#9210;</span></div>
     <div class="hr"><b>Start a mission</b><span class="k"><kbd>E</kbd></span><span class="t"><i>START</i></span></div>
     <div class="hr"><b>Menu &middot; this screen</b><span class="k"><kbd>M</kbd><kbd>Esc</kbd><kbd>?</kbd></span><span class="t">&#9776; &nbsp;?</span></div>
   </div>
-  <p class="hnote">Tap <b>FLY</b> (<b>HOVER</b> in the air) and the flight computer holds your height: stick &uarr; flies forward level on the rear nozzles, stick &larr; &rarr; turns, let go to stop. <b>UP</b> climbs, <b>DOWN</b> lands you on a pad, <b>MAX</b> doubles thrust to catch a fall, &#10226; &#10227; flip. Refill N&#8322; on the glowing charge pads.</p>
+  <p class="hnote">In the air the stick always flies: &uarr; forward on the rear nozzles (the car stays level), &larr; &rarr; turns. <b>LIFT</b> climbs and stops a fall, <b>BRAKE</b> stops and lands you, <b>DRIFT</b> + turn slides, &#10226; &#10227; flip. Tap <b>FLY</b> and the flight computer holds your height until you tap it again. Refill N&#8322; on the glowing charge pads.</p>
   <button id="hGo" class="big sm">GOT IT</button>
 </div></div>
 <div id="saveBox" class="modal hidden"><div class="box">
@@ -423,7 +416,7 @@ body.touch .hgrid .k,body:not(.touch) .hgrid .t{opacity:.6}
   <div class="row2"><button id="sbShare" class="big sm">Share / Save&hellip;</button><a id="sbDl" class="chip" href="#" download>&#11015; Download</a><button id="sbX" class="chip">Close</button></div>
 </div></div>
 <div id="glLost" class="hidden"><b>GRAPHICS PAUSED</b><span>Your phone reclaimed the GPU &middot; tap to reload (progress is saved)</span></div>
-<a id="credit" href="https://x.com/HabibiCapital" target="_blank" rel="noopener">by @HabibiCapital</a>
+<a id="credit" href="https://x.com/habibicapital_" target="_blank" rel="noopener">by @habibicapital_</a>
 <div id="rot" class="hidden"></div>
 
 <script async src="https://ga.jspm.io/npm:es-module-shims@1.10.0/dist/es-module-shims.js" crossorigin="anonymous"></script>
@@ -2755,7 +2748,7 @@ function setTrim(id, persist = true) {
   document.body.classList.toggle('t-boost', car.trim.boost > 0); document.body.classList.toggle('t-lift', car.trim.lift);
 }
 function respawnCar(x, z, h) {
-  Object.assign(car, { x, z, y: groundAt(x, z, 20), h, vx: 0, vz: 0, vy: 0, w: 0, air: false, airT: 0, sink: 0, drifting: false, susp: 0, suspV: 0, takeoff: null, rail: null, blend: 0, airLaunch: null, z60: null, gp: 0, gr: 0, td: null, flipM: null, press: 1 });
+  Object.assign(car, { x, z, y: groundAt(x, z, 20), h, vx: 0, vz: 0, vy: 0, w: 0, air: false, airT: 0, sink: 0, drifting: false, susp: 0, suspV: 0, takeoff: null, rail: null, blend: 0, airLaunch: null, z60: null, gp: 0, gr: 0, td: null, flipM: null, press: 1, hdgHold: null, airDrift: false, airDrifting: false, airSlide: false });
   car.lastG = car.y; car.trk = [null, null, null, null]; car.wB.set(0, 0, 0); car.q.setFromAxisAngle(AX_Y, h); car.u.fill(0); car.hover = null;
 }
 function nearestRoad(x, z) {
@@ -2817,12 +2810,9 @@ function stepCar(dt, inp) {
   // tapping again while it sets down after a flip chains another roll (double kickflips)
   if (flipTap) { const d = flipTap; const chain = c.flipM && c.flipM.phase === 'catch' && c.air;
     if (c.trim.att && gasAvail() > 0 && (!c.flipM || chain) && (!c.air || _uv.set(0, 1, 0).applyQuaternion(c.q).y > 0.3)) { const hov = chain ? c.flipM.hov : !!c.hover; c.flipM = { dir: d, rem: Math.PI * 2, phase: chain && c.y - groundAt(c.x, c.z, c.y) > 4 ? 'roll' : 'pop', hov, t: 0 }; onCarEvent('flip', { dir: d }); } }
-  // MAX (Z / MAX): double nozzle pressure in the air, at double the gas flow (on the ground it stays off so the 0-60 stays real)
-  c.press = c.air && inp.max && c.trim.tank && gasAvail() > 0 ? 2 : 1;
+  // regulator at normal pressure; the flight computer opens it up to double ("MAX", double gas flow) when it needs more thrust
+  c.press = 1;
   if (c.hover && (!c.trim.att || gasAvail() <= 0)) { c.hover = null; onCarEvent('hover', { on: false, why: 'gas' }); }
-  // DESCEND in manual flight: the flight computer takes over and sets you down (there are no retro nozzles)
-  if (!c.air || !inp.retro || c.hover) c.descArm = c.air && !c.hover;
-  if (c.air && inp.retro && c.descArm && !c.hover && c.trim.att && gasAvail() > 0 && _uv.set(0, 1, 0).applyQuaternion(c.q).y > 0.6 && !(mission && mission.type === 'hoverslam')) { c.descArm = false; toggleHover(); }
   if (c.air) stepAir(dt, inp); else stepGround(dt, inp);
   burnGas(dt); fireFlags();
   c.x += c.vx * dt; c.z += c.vz * dt;
@@ -2856,7 +2846,7 @@ function stepCar(dt, inp) {
   }
   c.vF = c.vx * nfx + c.vz * nfz; c.vL = c.vx * nlx + c.vz * nlz;
   c.speed = Math.hypot(c.vx, c.vz);
-  c.driftAmt = (!c.air && c.speed > 9) ? Math.abs(Math.atan2(c.vL, Math.abs(c.vF) + 0.5)) : 0;
+  c.driftAmt = ((!c.air || c.airDrifting) && c.speed > 9) ? Math.abs(Math.atan2(c.vL, Math.abs(c.vF) + 0.5)) : 0;
   // 0-60 mph timer: arms at a standstill, runs while the throttle or thrusters are on
   if (!c.air) {
     if (c.speed < 0.3 && c.thr <= 0 && !c.fireBoost) c.z60 = { t: 0 };
@@ -2875,7 +2865,7 @@ function stepGround(dt, inp) {
   _tq.set(0, tdrift ? -steer * 6500 * Math.sign(vF || 1) : 0, 0);
   const hoverLift = c.hover ? 1 : 0; // hover engaged on the ground: lift off to the hover height
   if (c.flipM) { c.flipM.t += dt; if (c.flipM.t > 0.8 || gasAvail() <= 0) c.flipM = null; else c.press = 2; } // quick flip from the ground: pop up on full pressure first
-  mixThrusters({ lift: inp.lift || hoverLift || c.flipM ? 1 : 0, boost: inp.boost ? 1 : 0, retro: inp.retro && !c.hover ? 1 : 0 }, _tq);
+  mixThrusters({ lift: inp.lift || hoverLift || c.flipM ? 1 : 0, boost: inp.boost ? 1 : 0 }, _tq);
   c.liftAcc = _fb.y / m; c.thrustDrift = tdrift;
   if (tdrift) c.w += _tb.y / PHYS.I.y * dt * 1.6;
   if (thr > 0) { const a = PHYS.TIRE_A * Math.sqrt(clamp(1 - Math.max(0, vF) / PHYS.VMAX, 0, 1)) + (vF < 0 ? 14 : 0); vF += thr * a * dt * (hb ? 0.45 : 1); }
@@ -2908,7 +2898,8 @@ function stepGround(dt, inp) {
 function takeOff(kind) {
   const c = car; c.air = true; c.airT = 0; c.takeoff = { x: c.x, z: c.z, y: c.y, t: 0 }; c.airLaunch = kind;
   if (kind !== 'loop') { _eC.set(c.gp, c.h, c.gr); c.q.setFromEuler(_eC); c.wB.set(0, c.w, 0); }
-  c.rollAcc = c.pitchAcc = c.yawAcc = 0; c.assistT = 0; c.pitchArmed = false; c.maxAlt = 0; c.liftAirT = 0; onCarEvent('takeoff', { kind });
+  else { _fw.set(0, 0, 1).applyQuaternion(c.q); if (Math.hypot(_fw.x, _fw.z) > 0.35) c.h = Math.atan2(_fw.x, _fw.z); } // off the curl: the nose, not the rail's heading
+  c.rollAcc = c.pitchAcc = c.yawAcc = 0; c.rollNet = c.pitchNet = 0; c.assistT = 0; c.pitchArmed = false; c.maxAlt = 0; c.liftAirT = 0; c.hdgHold = null; c.airDrift = c.airDrifting = false; c.psiPrev = null; onCarEvent('takeoff', { kind });
 }
 function landCar() {
   const c = car;
@@ -2917,14 +2908,15 @@ function landCar() {
   // touchdown report: what the landing targets are judged on
   const td = { vTd: Math.max(0, -c.vy), hSpeed: Math.hypot(c.vx, c.vz), tilt: Math.acos(clamp(_uv.y, -1, 1)) * 57.3, heading, x: c.x, z: c.z, gas: c.tank, gasPct: c.trim.tank ? clamp(c.tank / tankCap(), 0, 1) : 0 };
   const hard = _uv.y < 0.35 || td.vTd > 9;
-  const info = { airT: c.airT, liftT: c.liftAirT || 0, vy: c.vy, from: c.takeoff, roll: c.rollAcc, pitch: c.pitchAcc, yaw: c.yawAcc, up: _uv.y, kind: c.airLaunch, td, hard };
+  const net = (g, n) => Math.sign(g) * Math.min(Math.abs(g), Math.abs(n || 0));
+  const info = { airT: c.airT, liftT: c.liftAirT || 0, vy: c.vy, from: c.takeoff, roll: net(c.rollAcc, c.rollNet), pitch: net(c.pitchAcc, c.pitchNet), yaw: c.yawAcc, up: _uv.y, kind: c.airLaunch, td, hard };
   c.td = td; c.landQ.copy(c.q); c.blend = 1; c.h = heading;
   if (hard) { // roof, side or a heavy slam: tumble back onto the wheels
     c.vx *= 0.35; c.vz *= 0.35; shake = Math.max(shake, 0.8);
     spawnDebris(c.x, c.y + 0.5, c.z, 18, ['#ffffff', '#ffd060', '#c8d0d8'], 6, 0.1, 4, 3, 0.8);
   }
   c.suspV += Math.min(0, c.vy) * 0.09; shake = Math.max(shake, clamp(-c.vy * 0.03, 0, 0.6));
-  c.air = false; c.airT = 0; c.takeoff = null; c.airLaunch = null; c.wB.set(0, 0, 0); c.w = 0; c.gp = 0; c.gr = 0; c.flipM = null;
+  c.air = false; c.airT = 0; c.takeoff = null; c.airLaunch = null; c.wB.set(0, 0, 0); c.w = 0; c.gp = 0; c.gr = 0; c.flipM = null; c.hdgHold = null; c.airDrift = c.airDrifting = false;
   if (c.hover) { c.hover = null; onCarEvent('hover', { on: false, why: 'landed' }); }
   if (info.airT > 0.12) onCarEvent('land', info);
 }
@@ -2938,17 +2930,40 @@ function stepAir(dt, inp) {
   // Past ~100° (upside down) right the car with a roll, like the reveal car coming off the curl, not a nose-first flip.
   const sxz = Math.hypot(_bv.x, _bv.z), kE = sxz > 1e-3 ? Math.acos(clamp(_bv.y, -1, 1)) / sxz : 0, inv = _bv.y < -0.17;
   const eRoll = inv ? Math.atan2(_bv.x || 1e-3, _bv.y) : sxz > 1e-3 ? _bv.x * kE : 0, ePitch = inv ? 0 : _bv.z * kE;
-  if (Math.abs(inp.thr) < 0.15) c.pitchArmed = true; // gas held through takeoff does not pitch the car
-  const pin = c.pitchArmed ? inp.thr : 0, yawIn = inp.hb ? inp.steer : 0, rollIn = inp.hb ? 0 : inp.steer;
-  const manual = Math.abs(rollIn) > 0.12 || Math.abs(pin) > 0.12 || Math.abs(yawIn) > 0.12;
-  // flight computer: commanded body rates (x = pitch, nose down positive; y = yaw, left positive; z = roll, right positive)
+  // ONE set of air controls. With flight assist on (the default) the flight computer always flies the car from the stick:
+  // up = forward on the 4 rear nozzles, down = brake / back up, sideways = turn on the 2 nose jets, and the car stays level.
+  // LIFT climbs and BRAKE stops and sets you down while they are held. HOVER (FLY) is the only latch: it holds your height
+  // until you tap it again or land. DRIFT + turn is an air drift. Rolls and flips only come from the flip buttons.
+  // Flight assist OFF (acro, in the menu) is the expert exception: the stick drives pitch / roll / yaw rates directly.
+  const acro = S.assist === false, slam = !!(mission && mission.type === 'hoverslam');
+  const rawLift = acro || slam; // LIFT is one plain burn, booster-style; lit late, the regulator still opens by itself
+  const sF = Math.abs(inp.thr) > 0.08 ? inp.thr : 0, sS = Math.abs(inp.steer) > 0.08 ? inp.steer : 0;
+  _fw.set(0, 0, 1).applyQuaternion(c.q); if (Math.hypot(_fw.x, _fw.z) > 0.35) c.h = Math.atan2(_fw.x, _fw.z);
+  const fx = Math.sin(c.h), fz = Math.cos(c.h), rx = -Math.cos(c.h), rz = Math.sin(c.h);
+  const vf = c.vx * fx + c.vz * fz, vr = c.vx * rx + c.vz * rz, hs = Math.hypot(vf, vr), agl = c.y - groundAt(c.x, c.z, c.y);
+  // (acro still gets the air drift while hovering: the hover is the flight computer's)
+  const wasDrift = c.airDrift; c.airDrift = !!(inp.hb && T.att && (!acro || !!c.hover) && !c.flipM && gasAvail() > 0);
+  if (c.airDrift && !wasDrift) { c.driftV = hs; c.slideMode = vf < 6; } // the forward speed you went in with decides: drift or slide
+  // DRIFT pressed while slow (lining up on a pad): stick sideways slides the car sideways instead of swinging the tail
+  const slide = c.airDrift && c.slideMode, drift = c.airDrift && !c.slideMode; c.airSlide = slide; c.airDrifting = drift;
+  if (c.hdgHold == null || (sS && !slide) || c.flipM || drift || _bv.y < 0.5 || (acro && !c.hover && !inp.retro) || (!sS && Math.abs(w.y) > 0.3)) c.hdgHold = c.h;
+  const psi = Math.atan2(c.vx, c.vz), psiRate = c.psiPrev == null ? 0 : clamp(angDiff(c.psiPrev, psi) / Math.max(dt, 1e-3), -1.5, 1.5); c.psiPrev = psi;
+  const rearMax = 4 * (T.rearT || 0) * Math.max(0.05, gasAvail()) * c.press;
+  // nose jets: on the lift nozzles the path follows the nose (a banked turn, so the rate drops with speed).
+  // Centred, the jets hold the heading (pitch / roll corrections couple into yaw).
+  // Air drift: the jets swing the tail out until the nose leads the path by up to ~70° (set by the stick) and hold that
+  // angle while the path comes round; the rear nozzles then push across the old path, so the direction changes far
+  // faster than in a banked turn. Pressed while slow, DRIFT slides sideways instead (above); a drift that slows right down spins on the spot.
+  const turnRate = Math.min(1.1, 0.8 * PHYS.G * Math.tan(0.6) / Math.max(5, hs));
+  const yawT = drift && hs > 6 ? clamp(psiRate + 4 * (-sS * 1.2 - angDiff(psi, c.h)), -PHYS.RATE.y, PHYS.RATE.y)
+    : sS && !slide ? -sS * (drift ? PHYS.RATE.y : turnRate) : clamp(3 * angDiff(c.h, c.hdgHold), -PHYS.RATE.y, PHYS.RATE.y);
   _wd.set(0, 0, 0);
-  let liftCmd = inp.lift ? 1 : 0, boostCmd = 0;
+  let liftCmd = 0, boostCmd = 0;
   if (c.flipM && T.att) {
     // quick flip: pop (full pressure, level) until rising, then a roll-rate profile that stops exactly at 360°,
     // then the hover takes over again, or (from a hop or the ground) a cushioned descent that keeps the forward speed
     const F = c.flipM, agl = c.y - groundAt(c.x, c.z, c.y), level = () => _wd.set(clamp(PHYS.LEVEL * ePitch, -PHYS.RATE.x, PHYS.RATE.x), 0, clamp(-PHYS.LEVEL * eRoll, -PHYS.RATE.z, PHYS.RATE.z));
-    F.t += dt; c.press = 2; c.assistT = 0;
+    F.t += dt; c.press = 2;
     if (F.phase === 'pop') {
       liftCmd = _bv.y > 0.3 ? 1 : 0; level();
       if ((c.vy > 4.5 && agl > 1.2) || F.t > 0.8) { const tg = (c.vy + Math.sqrt(c.vy * c.vy + 2 * PHYS.G * Math.max(0, agl))) / PHYS.G; F.phase = c.vy > 4.5 || tg > 1.8 ? 'roll' : 'catch'; F.ct = 0; }
@@ -2956,52 +2971,67 @@ function stepAir(dt, inp) {
     else if (F.phase === 'roll') {
       _wd.set(0, 0, F.dir * Math.min(PHYS.RATE.z, Math.sqrt(2 * 14 * Math.max(0, F.rem))));
       F.rem -= Math.abs(w.z) * dt; liftCmd = _bv.y > 0.5 ? 0.5 : 0; // lift only while it pushes upward
-      if (F.rem <= 0.05 || F.t > 3) { if (c.hover) { c.flipM = null; c.hover.alt = c.y; c.hover.hdg = null; } else { F.phase = 'catch'; F.ct = 0; } }
+      if (F.rem <= 0.05 || F.t > 3) { if (c.hover) { c.flipM = null; c.hover.alt = c.y; } else { F.phase = 'catch'; F.ct = 0; } }
     } else { // catch: level, sink at 6 m/s, then flare to ~1.4 m/s for the touchdown
       F.ct += dt; level();
       const aZ = PHYS.G + 3 * ((agl > 2.6 ? -6 : -1.4) - c.vy), need = Math.max(0, m * aZ / (3.6 * (T.liftT || 1) * Math.max(0.05, gasAvail())));
       c.press = clamp(need, 1, 2); liftCmd = clamp(need / c.press, 0, 1);
-      if (c.hover) { c.flipM = null; c.hover.alt = c.y; c.hover.hdg = null; } // HOVER (or DOWN) takes over
-      else if (inp.lift) c.flipM = null; // UP: the player flies it again (landing, respawn or a splash also end it)
+      if (c.hover) c.flipM = null; // HOVER takes over
+      else if (inp.lift || inp.retro) c.flipM = null; // LIFT or BRAKE: the player flies it again (landing, respawn or a splash also end it)
     }
-  } else if (c.hover && T.att) {
-    const H = c.hover, fx = Math.sin(c.h), fz = Math.cos(c.h), rx = -Math.cos(c.h), rz = Math.sin(c.h);
-    const vf = c.vx * fx + c.vz * fz, vr = c.vx * rx + c.vz * rz, agl = c.y - groundAt(c.x, c.z, c.y);
-    // vertical: climb (LIFT), descend (RETRO / X) or hold altitude; slower descent close to the ground
-    let vsT;
-    // DOWN lands: stop first (descent waits while still moving), then come down fast and flare to ~0.5 m/s at touchdown
-    if (inp.lift) { vsT = 3; H.alt = c.y; } else if (inp.retro) { vsT = -clamp(0.8 * agl + 0.45, 0.5, 4) * clamp(1.25 - Math.hypot(vf, vr) / 4, 0.1, 1); H.alt = c.y; }
-    else vsT = clamp(1.5 * (H.alt - c.y), -2, 2);
-    // horizontal: the stick is a speed command; centred = brake to a stop and hold position.
-    // Forward comes from the 4 rear nozzles, so the car stays level at its height (up to 30 m/s, more with BOOST).
-    // Braking and backing up tilt the nose up: there are no front-facing nozzles.
-    // Sideways stick turns the car on the 2 nose jets; with SLIDE (the DRIFT button) held it slides sideways by rolling.
-    const slide = inp.hb, sF = Math.abs(inp.thr) > 0.08 ? inp.thr : 0, sS = Math.abs(inp.steer) > 0.08 ? inp.steer : 0;
-    const vTf = inp.boost ? Math.max(vf, 30) : sF > 0 ? sF * sF * 30 : sF * 8, vTr = slide ? sS * 8 : 0; // forward curve: small pushes for fine positioning, full stick = 30 m/s
-    const power = inp.max && !slide && Math.abs(sS) > 0.08; // MAX + turn: power turn, double lift lets it bank to ~55 deg so the path follows the nose
-    const aF = clamp(1.6 * (vTf - vf), -6, 9), aR = clamp((power ? 2.4 : 1.8) * (vTr - vr), power ? -13 : -6, power ? 13 : 6);
-    const rearMax = 4 * (T.rearT || 0) * Math.max(0.05, gasAvail()) * c.press;
-    let aTilt = aF; if (aF > 0 && rearMax) { boostCmd = clamp(m * aF / rearMax, 0, 1); aTilt = 0; }
-    // vertical first: while the climb/descent rate is far off target, keep the car nearly level so all lift goes up
-    // ...and flare level near the ground so the wheels touch down flat
-    const tiltCap = (vsT - c.vy > 2.5 && c.vy < -3 ? 0.1 : power ? 0.95 : 0.45) * clamp(0.12 + agl / 4, 0.12, 1);
-    // tilt is limited as one vector (like a drone), so braking on both axes cannot ask for ~1.4x the safe lean and saturate the lift nozzles
-    let pitchT = Math.atan(aTilt / PHYS.G), rollT = Math.atan(aR / PHYS.G); { const tn = Math.hypot(pitchT, rollT); if (tn > tiltCap) { pitchT *= tiltCap / tn; rollT *= tiltCap / tn; } }
-    // heading: the stick turns the car on the nose jets (gentler at speed); otherwise the jets hold the heading,
-    // because pitch/roll corrections couple into yaw
-    const turn = slide ? 0 : sS;
-    if (H.hdg == null || Math.abs(turn) > 0.02) H.hdg = c.h;
-    const yawT = turn ? -turn * (power ? Math.min(1.6, Math.max(4.5, 0.7 * PHYS.G * Math.tan(tiltCap)) / Math.max(5, Math.hypot(vf, vr))) : Math.min(0.9, 4.5 / Math.max(5, Math.abs(vf)))) : clamp(3 * angDiff(c.h, H.hdg), -PHYS.RATE.y, PHYS.RATE.y);
-    _wd.set(clamp(PHYS.LEVEL * 1.4 * (pitchT + ePitch), -2.5, 2.5), yawT, clamp(PHYS.LEVEL * 1.4 * (rollT - eRoll), -2.5, 2.5));
-    const tilt = Math.acos(clamp(_bv.y, 0.3, 1)), aZ = PHYS.G + 2.6 * (vsT - c.vy);
-    const need = m * aZ / Math.cos(tilt) / (3.6 * T.liftT * Math.max(0.05, gasAvail()));
-    if (need > 1 && gasAvail() > 0.5) c.press = Math.max(c.press, Math.min(inp.lift ? 2 : 1.8, need)); // catching a fall: the computer opens the regulator
-    liftCmd = _bv.y > 0.3 ? clamp(need / c.press, 0, 1) : 0; // upside down: right it first, lift once it pushes up
-    H.vsT = vsT; c.assistT = 0;
-  } else if (manual) { c.assistT = 0; _wd.set(pin * PHYS.RATE.x, -yawIn * PHYS.RATE.y, rollIn * PHYS.RATE.z); }
-  else { c.assistT += dt; if (S.assist !== false && c.assistT > 0.2) _wd.set(clamp(PHYS.LEVEL * ePitch, -PHYS.RATE.x, PHYS.RATE.x), 0, clamp(-PHYS.LEVEL * eRoll, -PHYS.RATE.z, PHYS.RATE.z)); }
+  } else if (T.att && acro && !c.hover && !inp.retro) {
+    // acro: the stick drives the rates directly (gas held through takeoff does not pitch the car); LIFT is raw
+    if (Math.abs(inp.thr) < 0.15) c.pitchArmed = true;
+    const pin = c.pitchArmed ? inp.thr : 0, yawIn = inp.hb ? inp.steer : 0, rollIn = inp.hb ? 0 : inp.steer;
+    if (Math.abs(rollIn) > 0.12 || Math.abs(pin) > 0.12 || Math.abs(yawIn) > 0.12) _wd.set(pin * PHYS.RATE.x, -yawIn * PHYS.RATE.y, rollIn * PHYS.RATE.z);
+    liftCmd = inp.lift ? 1 : 0;
+    if (inp.lift && c.vy < -2 && _bv.y > 0.6 && agl < liftStopHeight(1) * 1.05 + 0.3 && gasAvail() > 0.5) c.press = 2;
+  } else if (T.att) {
+    const H = c.hover, land = inp.retro && !slam, climb = inp.lift && (!rawLift || !!H);
+    if (H || land || climb) {
+      // ---- powered flight: the 4 lift nozzles carry the car and tilting them steers the thrust ----
+      // vertical: LIFT climbs at 6 m/s while you keep flying. BRAKE with the stick pushed forward descends while you keep flying;
+      // with the stick centred it stops first, then comes down and flares to ~0.5 m/s. HOVER holds the height.
+      const fly = land && sF > 0.08; let vsT;
+      if (climb) { vsT = 6; if (H) H.alt = c.y + Math.max(0, c.vy) ** 2 / (2 * PHYS.G); }
+      else if (land) { vsT = -clamp(0.8 * agl + 0.45, 0.5, fly ? 3 : 4) * (fly || (!H && agl < 1.5) ? 1 : clamp(1.25 - hs / 4, 0.1, 1)); if (H) H.alt = c.y; }
+      else vsT = clamp(1.5 * (H.alt - c.y), -2, 2);
+      // horizontal: the stick is a speed command (full stick = 30 m/s on the rear nozzles, the car stays level; braking and
+      // backing up tilt the nose up, there are no front nozzles). Centred: hovering stops and holds the spot, otherwise it keeps
+      // the speed you have. Turning never brakes. Air drift: the rear nozzles drive you out along the new heading.
+      const turning = Math.abs(sS) > 0.25 && !slide;
+      let vTf = land && !fly ? 0 : inp.boost ? Math.max(vf, 30) : sF > 0 ? (H ? sF * sF * 30 : Math.max(vf, sF * sF * 30)) : sF < 0 ? sF * 8 : H && !turning && !drift ? 0 : vf;
+      const vTr = inp.strafe ? inp.strafe * 8 : slide && !land ? sS * 6 : 0; // sideways only when sliding (and for the demo autopilot)
+      // drifting: the rear nozzles push hard along the nose (held to about your entry speed) and the bank only leans gently
+      // into the slide, so the car keeps sliding until you let go of DRIFT; then it grips and leaves along the nose
+      const drv = drift && !land && hs > 6;
+      const aF = drv ? 14 * clamp((Math.max(12, c.driftV || 0) + 4 - hs) / 4, 0, 1) : clamp(1.6 * (vTf - vf), -6, 9);
+      const grip = !drv && !land && Math.abs(vr) > 5; // let go of DRIFT (or shoved sideways): lean harder so it grips quickly
+      const aR = drv ? clamp(0.6 * (vTr - vr), -5, 5) : clamp(1.8 * (vTr - vr), grip ? -9 : -6, grip ? 9 : 6);
+      const aTilt = aF > 0 && rearMax ? 0 : aF; // pushing forward is the rear nozzles' job (set below, once the regulator pressure is known)
+      // vertical first: while the climb/descent rate is far off target, keep the car nearly level so all lift goes up
+      // ...and flare level near the ground so the wheels touch down flat
+      const tiltCap = (vsT - c.vy > 2.5 && c.vy < -3 ? 0.1 : grip ? 0.85 : 0.6) * clamp(0.12 + agl / 4, 0.12, 1);
+      // tilt is limited as one vector (like a drone), so braking on both axes cannot ask for ~1.4x the safe lean and saturate the lift nozzles
+      let pitchT = Math.atan(aTilt / PHYS.G), rollT = Math.atan(aR / PHYS.G); { const tn = Math.hypot(pitchT, rollT); if (tn > tiltCap) { pitchT *= tiltCap / tn; rollT *= tiltCap / tn; } }
+      _wd.set(clamp(PHYS.LEVEL * 1.4 * (pitchT + ePitch), -2.5, 2.5), yawT, clamp(PHYS.LEVEL * 1.4 * (rollT - eRoll), -2.5, 2.5));
+      const tilt = Math.acos(clamp(_bv.y, 0.3, 1)), aZ = PHYS.G + 2.6 * (vsT - c.vy);
+      const need = m * aZ / Math.cos(tilt) / (3.6 * T.liftT * Math.max(0.05, gasAvail()));
+      if (need > 1 && gasAvail() > 0.5) c.press = Math.max(c.press, Math.min(climb ? 2 : 1.8, need)); // catching a fall or climbing hard: the computer opens the regulator (MAX)
+      liftCmd = _bv.y > 0.3 ? clamp(need / c.press, 0, 1) : 0; // upside down: right it first, lift once it pushes up
+      if (aF > 0 && rearMax) boostCmd = clamp(m * aF / (rearMax * c.press), 0, 1);
+      if (H) H.vsT = vsT;
+    } else {
+      // ---- coasting (a jump, a hop, or after letting go of LIFT / BRAKE): no lift, gravity wins, the car stays level.
+      // Stick up adds speed on the rear nozzles, down raises the nose, sideways turns on the nose jets.
+      _wd.set(clamp(PHYS.LEVEL * ((sF < 0 ? 0.3 * sF : 0) + ePitch), -PHYS.RATE.x, PHYS.RATE.x), yawT, clamp(-PHYS.LEVEL * eRoll, -PHYS.RATE.z, PHYS.RATE.z));
+      // hoverslam: LIFT is one raw burn; lit too late for normal pressure, the regulator opens by itself
+      if (inp.lift) { liftCmd = _bv.y > 0.3 ? 1 : 0; if (c.vy < -2 && _bv.y > 0.6 && agl < liftStopHeight(1) * 1.05 + 0.3 && gasAvail() > 0.5) c.press = 2; }
+      if (sF > 0 && rearMax) boostCmd = clamp(m * clamp(1.6 * (sF * sF * 30 - vf), 0, 9) / (rearMax * c.press), 0, 1);
+    }
+  }
   if (T.att) _tq.set(I.x * PHYS.GAIN.x * (_wd.x - w.x), I.y * PHYS.GAIN.y * (_wd.y - w.y), I.z * PHYS.GAIN.z * (_wd.z - w.z)); else _tq.set(0, 0, 0);
-  mixThrusters({ lift: liftCmd, boost: Math.max(inp.boost ? 1 : 0, boostCmd), retro: inp.retro && !c.hover ? 1 : 0 }, _tq);
+  mixThrusters({ lift: liftCmd, boost: Math.max(inp.boost ? 1 / (c.press || 1) : 0, boostCmd) }, _tq);
   if (c.hover || (liftCmd > 0.05 && T.lift && gasAvail() > 0)) c.liftAirT = (c.liftAirT || 0) + dt; // thrust-supported time is flying, not jump air
   // translation: thrust (body -> world) + aerodynamic drag; gravity is applied by stepCar
   _fwd.copy(_fb).applyQuaternion(c.q);
@@ -3013,7 +3043,9 @@ function stepAir(dt, inp) {
   _iw.set(I.x * w.x, I.y * w.y, I.z * w.z); _bv2.copy(w).cross(_iw); _tb.sub(_bv2);
   w.x += _tb.x / I.x * dt; w.y += _tb.y / I.y * dt; w.z += _tb.z / I.z * dt;
   const wl = w.length(); if (wl > 1e-5) { _qa.setFromAxisAngle(_bv.copy(w).divideScalar(wl), wl * dt); c.q.multiply(_qa).normalize(); }
-  c.rollAcc += w.z * dt; c.pitchAcc += w.x * dt; c.yawAcc += w.y * dt;
+  // only fast rotation counts toward rolls and flips: a long banked or nose-up turn must not score as a kickflip
+  if (Math.abs(w.z) > 1.5) c.rollAcc += w.z * dt; if (Math.abs(w.x) > 1.5) c.pitchAcc += w.x * dt; c.yawAcc += w.y * dt;
+  c.rollNet = (c.rollNet || 0) + w.z * dt; c.pitchNet = (c.pitchNet || 0) + w.x * dt;
   _fw.set(0, 0, 1).applyQuaternion(c.q); if (Math.hypot(_fw.x, _fw.z) > 0.35) c.h = Math.atan2(_fw.x, _fw.z);
   c.maxAlt = Math.max(c.maxAlt || 0, c.y - groundAt(c.x, c.z, c.y));
 }
@@ -3057,7 +3089,7 @@ function stepRail(dt, inp) {
   }
 }
 function toggleHover() {
-  const c = car;
+  const c = car; c.hdgHold = null;
   if (c.hover) { c.hover = null; onCarEvent('hover', { on: false, why: 'off' }); return; }
   if (!c.trim.att) { onCarEvent('hover', { on: false, why: 'trim' }); return; }
   if (gasAvail() <= 0) { onCarEvent('hover', { on: false, why: 'gas' }); return; }
@@ -3647,7 +3679,7 @@ function playStep(s, t, spb) {
 }
 
 // ================= INPUT =================
-const keys = {}, inp = { thr: 0, steer: 0, hb: false, boost: false, lift: false, retro: false, hoverTap: false, max: false, flipTap: 0 }, touchIn = { steer: 0, ty: 0, gas: false, brake: false, hand: false, boost: false, lift: false };
+const keys = {}, inp = { thr: 0, steer: 0, hb: false, boost: false, lift: false, retro: false, hoverTap: false, flipTap: 0, strafe: 0 }, touchIn = { steer: 0, ty: 0, gas: false, brake: false, hand: false, boost: false, lift: false };
 let started = false, paused = false, photo = null, replay = null, simScale = 1;
 addEventListener('keydown', e => {
   if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT')) return;
@@ -3679,8 +3711,7 @@ addEventListener('blur', () => { for (const k in keys) keys[k] = false; });
   for (const [el, d] of [['tFlipL', -1], ['tFlipR', 1]]) { const b = $(el); if (b) b.addEventListener('pointerdown', e => { inp.flipTap = d; b.classList.add('on'); setTimeout(() => b.classList.remove('on'), 180); e.preventDefault(); }); }
   for (const [el, k] of [['tGas', 'gas'], ['tBrake', 'brake'], ['tHand', 'hand'], ['tBoost', 'boost'], ['tLift', 'lift']]) {
     const b = $(el);
-    b.addEventListener('pointerdown', e => { touchIn[k] = true; touchIn[k + 'Air'] = !!((car.air || car.hover) && car.trim.lift);
-      if (k === 'gas' && touchIn.gasAir && car.air && !car.hover && car.trim.att && S.assist !== false && (!car.flipM || car.flipM.phase === 'catch') && _uv.set(0, 1, 0).applyQuaternion(car.q).y > 0.6 && !(mission && mission.type === 'hoverslam')) inp.hoverTap = true; // UP = fly: hover takes over (right side up, assist on)
+    b.addEventListener('pointerdown', e => { touchIn[k] = true; if (k === 'brake') touchIn.brakeAir = !!(car.air || car.hover);
       b.classList.add('on'); try { b.setPointerCapture(e.pointerId); } catch (err) { } e.preventDefault(); });
     const up = () => { touchIn[k] = false; b.classList.remove('on'); };
     b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up); b.addEventListener('lostpointercapture', up);
@@ -3688,17 +3719,14 @@ addEventListener('blur', () => { for (const k in keys) keys[k] = false; });
 })();
 let padPrev = {};
 function computeInput(dt) {
-  let thr = 0, st = 0, hb = !!keys.Space, kb = false, boost = !!(keys.ShiftLeft || keys.ShiftRight) || touchIn.boost, lift = !!keys.KeyF || touchIn.lift, retro = !!keys.KeyX, maxP = !!keys.KeyZ;
-  const flyPad = (car.air || car.hover) && car.trim.lift; // phone buttons switch to flight duties in the air: GAS = UP, BRAKE = DOWN, DRIFT = MAX
+  let thr = 0, st = 0, hb = !!keys.Space || touchIn.hand, kb = false, boost = !!(keys.ShiftLeft || keys.ShiftRight) || touchIn.boost, lift = !!keys.KeyF || touchIn.lift, retro = !!keys.KeyX;
   if (keys.KeyW || keys.ArrowUp) { thr += 1; kb = true; } if (keys.KeyS || keys.ArrowDown) { thr -= 1; kb = true; }
   if (keys.KeyA || keys.ArrowLeft) { st -= 1; kb = true; } if (keys.KeyD || keys.ArrowRight) { st += 1; kb = true; }
-  // a phone button keeps the job it was pressed for until released: GAS held over a ramp stays GAS, DOWN held through touchdown never becomes reverse
-  const tFly = k => touchIn[k] && touchIn[k + 'Air'], tDrive = k => touchIn[k] && !touchIn[k + 'Air'];
-  if (car.air || car.hover) { thr += -touchIn.ty; if (flyPad) { retro = retro || tFly('brake'); lift = lift || tFly('gas'); maxP = maxP || tFly('hand'); } }
-  else thr += (tDrive('gas') || touchIn.ty < -0.55 ? 1 : 0) - (tDrive('brake') || touchIn.ty > 0.6 ? 1 : 0);
-  hb = hb || tDrive('hand');
-  // one thumb cannot hold UP and MAX together: holding UP when it is too low for normal lift opens the regulator by itself
-  if (isTouch && flyPad && tFly('gas') && car.air && !car.hover && !car.flipM && car.vy < -2 && car.y - groundAt(car.x, car.z, car.y) < liftStopHeight(1) * 1.05 + 0.3) maxP = true;
+  // phone buttons keep one meaning on the ground and in the air, and work the moment they are pressed:
+  // GAS = go, BRAKE = stop (in the air: stop and set down), LIFT = up, DRIFT = drift. In the air the stick flies: up = forward, sideways = turn.
+  const acroAir = S.assist === false && car.trim.att && car.air && !car.hover; // acro: the stick pitches, so GAS pushes on the rear nozzles instead
+  if (car.air || car.hover) { thr += -touchIn.ty + (touchIn.gas && !acroAir ? 1 : 0); if (acroAir && touchIn.gas) boost = true; if (touchIn.brake) { if (car.trim.att) retro = true; else thr -= 1; } }
+  else thr += (touchIn.gas || touchIn.ty < -0.55 ? 1 : 0) - ((touchIn.brake && !(touchIn.brakeAir && car.vF < 0.5)) || touchIn.ty > 0.6 ? 1 : 0); // BRAKE held through a landing stops you but never starts reversing
   let ts = touchIn.steer; ts = Math.sign(ts) * Math.pow(Math.abs(ts), 1.4);
   const gp = navigator.getGamepads ? navigator.getGamepads()[0] : null;
   if (gp) {
@@ -3710,11 +3738,11 @@ function computeInput(dt) {
     if ((gp.buttons[12] && gp.buttons[12].pressed && !padPrev[12]) || (gp.buttons[10] && gp.buttons[10].pressed && !padPrev[10])) inp.hoverTap = true; // D-pad up / L3: HOVER
     if ((car.air || car.hover) && gp.buttons[13] && gp.buttons[13].pressed) retro = true; // D-pad down: DESCEND
     const pr = i => gp.buttons[i] && gp.buttons[i].pressed && !padPrev[i];
-    if (pr(14)) inp.flipTap = -1; if (pr(15)) inp.flipTap = 1; if (gp.buttons[11] && gp.buttons[11].pressed) maxP = true; // D-pad left/right: quick flips · R3: MAX
+    if (pr(14)) inp.flipTap = -1; if (pr(15)) inp.flipTap = 1; // D-pad left/right: quick flips
     if (pr(3)) cycleCam(); if (pr(1)) nextStation(); if (pr(9)) togglePause();
     padPrev = {}; gp.buttons.forEach((b, i) => padPrev[i] = b.pressed);
   }
-  inp.thr = clamp(thr, -1, 1); inp.hb = hb; inp.boost = boost; inp.lift = lift; inp.retro = retro; inp.max = maxP;
+  inp.thr = clamp(thr, -1, 1); inp.hb = hb; inp.boost = boost; inp.lift = lift; inp.retro = retro; inp.strafe = 0;
   const target = clamp(st + ts, -1, 1);
   inp.steer = kb && !ts ? damp(inp.steer, target, target === 0 ? 14 : 11, dt) : target;
 }
@@ -3796,20 +3824,22 @@ function updateReplay(dt) {
 const DR = { pts: 0, mult: 1, t: 0, active: false, timeIn: 0 };
 function updateDrift(dt) {
   const el = $('combo');
-  if (car.driftAmt > 0.26 && car.speed > 10 && !car.air && car.sink <= 0) {
+  if (car.driftAmt > 0.26 && car.speed > 10 && (!car.air || car.airDrifting) && car.sink <= 0) {
     const deg = Math.min(70, car.driftAmt * 57.3);
-    if (!DR.active) { DR.active = true; DR.pts = 0; DR.mult = 1; DR.timeIn = 0; }
+    if (!DR.active) { DR.active = true; DR.pts = 0; DR.mult = 1; DR.timeIn = 0; DR.air = false; DR.airT = 0; }
+    // an air drift has nothing to hit: it scores for 6 s at most, the multiplier tops out at x3 and it never counts for the drift events
+    if (car.air) { DR.air = true; DR.airT += dt; }
     DR.t = 1.6; DR.timeIn += dt;
-    DR.pts += dt * (deg - 12) * car.speed * 0.32 * DR.mult;
-    const m = Math.min(8, 1 + Math.floor(DR.timeIn / 1.6)); if (m > DR.mult) { DR.mult = m; SFX.blip(m); }
+    if (!car.air || DR.airT <= 6) DR.pts += dt * (deg - 12) * car.speed * 0.32 * DR.mult;
+    const m = Math.min(DR.air ? 3 : 8, 1 + Math.floor(DR.timeIn / 1.6)); if (m > DR.mult) { DR.mult = m; SFX.blip(m); }
   } else if (DR.active) { DR.t -= dt; if (DR.t <= 0) bankDrift(); }
-  if (DR.active) { const h = `${fmt(Math.round(DR.pts / 10) * 10)} <span style="color:var(--yellow)">&times;${DR.mult}</span><small>DRIFT${DR.t < 1.5 ? ' &middot; KEEP IT UP' : ''}</small>`; if (h !== DR.html) { el.innerHTML = h; DR.html = h; } el.classList.add('on'); }
+  if (DR.active) { const h = `${fmt(Math.round(DR.pts / 10) * 10)} <span style="color:var(--yellow)">&times;${DR.mult}</span><small>${car.air ? 'AIR DRIFT' : 'DRIFT'}${DR.t < 1.5 ? ' &middot; KEEP IT UP' : ''}</small>`; if (h !== DR.html) { el.innerHTML = h; DR.html = h; } el.classList.add('on'); }
   else if (DR.html) { el.classList.remove('on'); DR.html = ''; }
 }
 function bankDrift() {
   const p = Math.round(DR.pts); DR.active = false;
-  if (p >= 40) { ST.drift += p; ST.score += p; ST.bestCombo = Math.max(ST.bestCombo, p); popScore('DRIFT +' + fmt(p), '#2ef6ff'); if (mission && mission.type === 'drift') mission.score += p; challengeDrift(p); }
-  DR.pts = 0; DR.mult = 1; DR.timeIn = 0;
+  if (p >= 40) { ST.drift += p; ST.score += p; ST.bestCombo = Math.max(ST.bestCombo, p); popScore('DRIFT +' + fmt(p), '#2ef6ff'); if (!DR.air) { if (mission && mission.type === 'drift') mission.score += p; challengeDrift(p); } }
+  DR.pts = 0; DR.mult = 1; DR.timeIn = 0; DR.air = false;
 }
 function breakCombo() { if (DR.active && DR.pts > 80) popScore('COMBO LOST', '#ff4060'); DR.active = false; DR.pts = 0; DR.mult = 1; DR.timeIn = 0; }
 function collectTapes() {
@@ -4105,7 +4135,7 @@ function makeCard() {
   x.globalCompositeOperation = 'destination-out'; for (let i = 0; i < 5; i++) x.fillRect(-62, 6 + i * 11, 124, 3 + i * 1.2); x.restore();
   x.font = '800 18px "Trebuchet MS",sans-serif'; x.textAlign = 'right'; x.fillStyle = 'rgba(255,255,255,.9)'; x.shadowColor = '#000'; x.shadowBlur = 6;
   x.fillText('Drive yours → ' + (location.host || 'neon drive') + location.pathname.replace(/index\.html$/, ''), W2 - 36, H2 - 54);
-  x.font = '700 15px "Trebuchet MS",sans-serif'; x.fillStyle = 'rgba(255,214,240,.85)'; x.fillText('by @HabibiCapital', W2 - 36, H2 - 30); x.shadowBlur = 0;
+  x.font = '700 15px "Trebuchet MS",sans-serif'; x.fillStyle = 'rgba(255,214,240,.85)'; x.fillText('by @habibicapital_', W2 - 36, H2 - 30); x.shadowBlur = 0;
   return c;
 }
 function shareUrl() { const base = location.href.split('?')[0].split('#')[0]; return base + (S.handle ? '?u=' + encodeURIComponent(S.handle) : ''); }
@@ -4127,11 +4157,11 @@ function toggleRecord() {
   if (recState) { recState.mr.stop(); return; }
   if (!window.MediaRecorder || !HTMLCanvasElement.prototype.captureStream) { popScore('Recording not supported here', '#ff4060'); return; }
   const src = renderer.domElement, w = Math.min(1280, src.width) & ~1, h = Math.round(w * src.height / src.width / 2) * 2, [rc, rx] = mkCanvas(w, h);
-  const stream = rc.captureStream(30); if (AU.rec) AU.rec.stream.getAudioTracks().forEach(t => stream.addTrack(t));
-  const mime = ['video/mp4;codecs=avc1.42E01E,mp4a.40.2', 'video/mp4;codecs=avc1', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'].find(t => MediaRecorder.isTypeSupported(t)) || '';
+  const stream = rc.captureStream(30); if (AU.rec) AU.rec.stream.getAudioTracks().forEach(t => stream.addTrack(t.clone()));
+  const mime = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm', 'video/mp4'].find(t => MediaRecorder.isTypeSupported(t)) || '';
   let mr; try { mr = new MediaRecorder(stream, mime ? { mimeType: mime, videoBitsPerSecond: 6e6 } : undefined); } catch (e) { popScore('Recording failed', '#ff4060'); return; }
   const chunks = []; mr.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
-  mr.onstop = () => { const type = mr.mimeType || mime || 'video/webm', ext = type.includes('mp4') ? 'mp4' : 'webm'; downloadBlob(new Blob(chunks, { type }), `neon-drive-${S.handle || 'clip'}.${ext}`); recState = null; $('recInd').classList.add('hidden'); $('bRec').classList.remove('on'); popScore('CLIP SAVED', '#2ef6ff'); };
+  mr.onstop = () => { stream.getTracks().forEach(t => t.stop()); const type = mr.mimeType || mime || 'video/webm', ext = type.includes('mp4') ? 'mp4' : 'webm'; downloadBlob(new Blob(chunks, { type }), `neon-drive-${S.handle || 'clip'}.${ext}`); recState = null; $('recInd').classList.add('hidden'); $('bRec').classList.remove('on'); popScore('CLIP SAVED', '#2ef6ff'); };
   mr.start(250); recState = { mr, rc, rx, w, h, t: 8 }; $('recInd').classList.remove('hidden'); $('bRec').classList.add('on');
 }
 function recFrame(dt) {
@@ -4184,8 +4214,7 @@ function startStunt(type) {
   else { car.tank = tankCap(); respawnCar(STRIP.start - 2.4, STRIP.z, Math.PI / 2); }
   camS.init = false;
   mission = { type, stunt: true, t: 0, score: 0, state: type === 'launch' ? 'stage' : 'go', tries: 1, resetT: 0, tree: 0, home: [car.x, car.z, car.h] };
-  const lift = isTouch ? 'LIFT' : 'F', roll = isTouch ? 'steer' : 'A / D';
-  const msg = { loop: ['SUCTION LOOP', 'Roll in slowly (under 20 mph) · fan suction holds you upside down · roll upright · land on pad L'], kick: ['KICKFLIP LINEUP', `Hit 50+ mph · ${lift} to hop, then ${isTouch ? '⟲ / ⟳' : 'Q / E'} for a quick flip (or ${roll} to roll it) · clear all five`], launch: ['0–60 LAUNCH', 'Wait for green · full throttle' + (car.trim.boost ? (isTouch ? ' + BOOST' : ' + SHIFT') : '')] }[type];
+  const msg = { loop: ['SUCTION LOOP', 'Roll in slowly (under 20 mph) · fan suction holds you upside down · roll upright · land on pad L'], kick: ['KICKFLIP LINEUP', `Hit 50+ mph · tap ${isTouch ? '⟲ / ⟳' : 'Q / E'} about a second before the cars: it pops up and kickflips · clear all five`], launch: ['0–60 LAUNCH', 'Wait for green · full throttle' + (car.trim.boost ? (isTouch ? ' + BOOST' : ' + SHIFT') : '')] }[type];
   bigMsg(msg[0], msg[1], 2.6, MARKERS[type].col); $('mBox').classList.remove('hidden'); setTree(-1);
 }
 function finishStunt(val, sub) {
@@ -4203,11 +4232,11 @@ function updateStunt(dt) {
   if (m.state === 'reset') { m.resetT -= dt; if (m.resetT <= 0) { respawnCar(...m.home); car.tank = tankCap(); camS.init = false; m.state = m.type === 'launch' ? 'stage' : 'go'; m.t = 0; m.tree = 0; m.z60 = m.et = 0; setTree(-1); } return; }
   if (m.type === 'loop') {
     $('mTitle').textContent = 'SUCTION LOOP';
-    $('mInfo').textContent = car.rail ? (car.rail.phi < 1.3 ? 'Fan suction on · ease off to hang on the wall' : car.rail.phi < 2.9 ? 'Throttle over the top!' : 'Upside down…') : car.air ? `Roll upright · ${isTouch ? 'UP to catch it, DOWN to land' : 'F to cushion'}` : car.speed > 9 ? `Too fast! Roll in under 20 mph · try ${m.tries}` : `Roll into the curl slowly · try ${m.tries}`;
+    $('mInfo').textContent = car.rail ? (car.rail.phi < 1.3 ? 'Fan suction on · ease off to hang on the wall' : car.rail.phi < 2.9 ? 'Throttle over the top!' : 'Upside down…') : car.air ? `${S.assist === false ? 'Roll it upright with the stick' : 'The flight computer rolls it upright'} · ${isTouch ? 'LIFT' : 'F'} catches it, ${isTouch ? 'BRAKE' : 'X'} lands` : car.speed > 9 ? `Too fast! Roll in under 20 mph · try ${m.tries}` : `Roll into the curl slowly · try ${m.tries}`;
   } else if (m.type === 'kick') {
     $('mTitle').textContent = 'KICKFLIP LINEUP';
-    $('mInfo').textContent = car.air ? `Roll ${Math.round(Math.abs(car.rollAcc) * 57.3)}°` : `${Math.round(car.speed * 2.237)} mph — hop at 50+ before the lineup · try ${m.tries}`;
-    if (!car.air && Math.abs(car.z - LINEUP.z) < 8 && car.x > LINEUP.x0 - 1 && car.x < LINEUP.x1 + 1) failStunt('Hop sooner — clear all five');
+    $('mInfo').textContent = car.air ? `Roll ${Math.round(Math.abs(car.rollAcc) * 57.3)}°` : `${Math.round(car.speed * 2.237)} mph — flip at 50+, a second before the lineup · try ${m.tries}`;
+    if (!car.air && Math.abs(car.z - LINEUP.z) < 8 && car.x > LINEUP.x0 - 1 && car.x < LINEUP.x1 + 1) failStunt('Flip sooner — clear all five');
   } else updateLaunch(dt);
 }
 function updateLaunch(dt) {
@@ -4231,7 +4260,7 @@ function landed(d) {
   if (AUTO) { SFX.crash(Math.min(0.5, -d.vy / 30)); return; } // the reveal autopilot scores nothing for the player
   const air = Math.max(0, d.airT - (d.liftT || 0)), dist = d.from ? Math.hypot(car.x - d.from.x, car.z - d.from.z) : 0, ok = !d.hard, inStunt = wasChal || !!(mission && mission.stunt);
   SFX.crash(Math.min(0.5, -d.vy / 30));
-  if (!ok) { popScore('WIPEOUT', '#ff4060'); breakCombo(); if (mission && mission.stunt && mission.state === 'go') failStunt(d.up < 0.35 ? (d.kind === 'loop' ? 'Roll upright before touchdown' : 'Land it on the wheels') : `Too fast (${d.td.vTd.toFixed(0)} m/s) — cushion with ${isTouch ? 'UP (hover), then DOWN' : 'F (lift) or G (hover)'}`); return; }
+  if (!ok) { popScore('WIPEOUT', '#ff4060'); breakCombo(); if (mission && mission.stunt && mission.state === 'go') failStunt(d.up < 0.35 ? (d.kind === 'loop' ? 'Roll upright before touchdown' : 'Land it on the wheels') : `Too fast (${d.td.vTd.toFixed(0)} m/s) — cushion with ${isTouch ? 'LIFT, or BRAKE to set down' : 'F (lift) or X (land)'}`); return; }
   const rolls = Math.floor(Math.abs(d.roll) / (Math.PI * 2) + 0.15), flips = Math.floor(Math.abs(d.pitch) / (Math.PI * 2) + 0.15), half = !rolls && Math.abs(d.roll) > Math.PI * 0.8;
   let pts = 0; const label = [];
   if (air > 0.55) { pts += Math.round(air * 380 + dist * 6); ST.jumps++; ST.bestAir = Math.max(ST.bestAir, air); }
@@ -4248,7 +4277,7 @@ function landed(d) {
     finishStunt(sc, parts.join(' · '));
   } else if (mission && mission.type === 'kick' && mission.state === 'go' && d.from && d.from.x < LINEUP.x0 && car.x > LINEUP.x1) {
     const g = gradeLanding(d.td, PADS.kick);
-    if (rolls) finishStunt(rolls * 2000 + (g.onPad ? PAD_BONUS[g.medal] : 0), `${rolls > 1 ? rolls + '× ' : ''}kickflip over the lineup` + (g.onPad ? ` · pad K ${g.medal ? g.medal.toLowerCase() : 'touch'}` : '')); else failStunt(`Roll it! ${isTouch ? 'Steer' : 'A / D'} while airborne`);
+    if (rolls) finishStunt(rolls * 2000 + (g.onPad ? PAD_BONUS[g.medal] : 0), `${rolls > 1 ? rolls + '× ' : ''}kickflip over the lineup` + (g.onPad ? ` · pad K ${g.medal ? g.medal.toLowerCase() : 'touch'}` : '')); else failStunt(`Flip it! Tap ${isTouch ? '⟲ / ⟳' : 'Q / E'} about a second before the cars`);
   }
   const big = d.kind === 'loop' || rolls || flips || (air > 1.15 && d.kind !== 'lift');
   // replay from the takeoff, or from the flip when a flip happened during a long hover; never a long hover descent
@@ -4350,9 +4379,10 @@ function endDemo(finished) {
   if (finished) bigMsg('YOUR TURN', 'Suction Loop, Kickflip, 0–60 and the landing pads are all on the launch site', 3.2, '#ffe45c');
 }
 $('demoSkip').addEventListener('click', () => endDemo(false));
+const KICK_AT = 14; // the demo taps the flip this many metres before the lineup
 function autoInput(I, dt) {
   const A = AUTO, c = car; A.t += dt; demoTelemetry(dt);
-  I.thr = 0; I.steer = 0; I.hb = false; I.boost = false; I.lift = false; I.retro = false; I.hoverTap = false; I.max = false; I.flipTap = 0;
+  I.thr = 0; I.steer = 0; I.hb = false; I.boost = false; I.lift = false; I.retro = false; I.hoverTap = false; I.flipTap = 0; I.strafe = 0;
   const lane = (lineZ, dir) => { const th = Math.atan2(dir * 22, lineZ - c.z); I.steer = clamp(-angDiff(c.h, th) * 2.5, -1, 1); };
   const upY = () => _uv.set(0, 1, 0).applyQuaternion(c.q).y, agl = () => c.y - groundAt(c.x, c.z, c.y);
   const stop = () => { I.thr = c.vF > 0.5 ? -1 : c.vF < -0.5 ? 1 : 0; I.hb = c.speed < 3; A.done += dt; };
@@ -4363,10 +4393,9 @@ function autoInput(I, dt) {
     const fx = Math.sin(c.h), fz = Math.cos(c.h), rx = -Math.cos(c.h), rz = Math.sin(c.h), dx = P.x - c.x, dz = P.z - c.z;
     const eF = dx * fx + dz * fz, eR = dx * rx + dz * rz, vf = c.vx * fx + c.vz * fz, vr = c.vx * rx + c.vz * rz;
     const vF = clamp(0.6 * eF, -5, 5), vR = clamp(0.6 * eR, -5, 5); // wanted speeds; the hover stick is a speed command
-    I.thr = clamp(vF > 0 ? Math.sqrt(vF / 30) : vF / 8, -1, 1); I.hb = true; I.steer = clamp(vR / 8, -1, 1); // SLIDE held: sideways stick slides
+    I.thr = clamp(vF > 0 ? Math.sqrt(vF / 30) : vF / 8, -1, 1); I.strafe = clamp(vR / 8, -1, 1); // autopilot-only strafe channel (players turn and fly forward)
     const d = Math.hypot(dx, dz); I.lift = agl() < 3 && d > 2.5; I.retro = !I.lift && d < 1.2 && Math.hypot(c.vx, c.vz) < 0.8; return d;
   };
-  const roll360 = () => { const rem = Math.PI * 2 - Math.abs(c.rollAcc); I.steer = rem > 0.05 ? Math.min(8, Math.sqrt(2 * 13 * rem)) / 8 : 0; return rem <= 0.05; };
   if (A.seg === 0) { // creep up, pause on the wall, hang inverted, reverse down
     if (A.phase === 'run') { lane(LOOP.z, -1); I.thr = c.speed < 4 ? 0.5 : 0; if (c.rail) A.phase = 'climb'; }
     else if (A.phase === 'climb') { I.thr = railThr(3.5); if (c.rail && c.rail.phi > Math.PI / 2 - 0.04) { A.phase = 'wall'; A.ht = 0; } }
@@ -4382,10 +4411,8 @@ function autoInput(I, dt) {
     else if (A.phase === 'hover') { A.ht += dt; hoverTo(PADS.loop); if (!c.air) { A.phase = 'landed'; $('demoR').textContent = 'WELL, IT WORKED.'; } }
     else { stop(); if (A.done > 2.6) nextDemoSeg(); }
   } else if (A.seg === 2) { // the kickflip
-    if (A.phase === 'run') { lane(LINEUP.z, 1); I.thr = c.speed < 20 ? 1 : 0; if (c.x >= LINEUP.x0 - 32) A.phase = 'hop'; }
-    else if (A.phase === 'hop') { A.lt += dt; I.lift = true; if (A.lt > 1.3) A.phase = 'roll'; }
-    else if (A.phase === 'roll') { if (!c.air) A.phase = 'landed'; else if (roll360()) A.phase = 'cushion'; }
-    else if (A.phase === 'cushion') { I.lift = c.vy < -1.6 && agl() < 4.5 && upY() > 0.8; if (!c.air) A.phase = 'landed'; }
+    if (A.phase === 'run') { lane(LINEUP.z, 1); I.thr = c.speed < 20 ? 1 : 0; if (c.x >= LINEUP.x0 - KICK_AT) { I.flipTap = 1; A.phase = 'flip'; A.lt = 0; } }
+    else if (A.phase === 'flip') { A.lt += dt; if (A.lt > 0.4 && !c.air) A.phase = 'landed'; } // the quick flip pops, rolls and cushions the landing
     else { stop(); if (A.done > 2.4) nextDemoSeg(); }
   } else if (A.seg === 3) { // 0-60 on the Thrust trim, with the timer glitch
     lane(STRIP.z, 1);
@@ -4395,9 +4422,8 @@ function autoInput(I, dt) {
     if (A.z60) $('demoR').textContent = `0–60 MPH  ${A.z60.toFixed(2)} s`;
   } else if (A.seg === 4) { // standing start: lift off, flip, hover down
     if (A.phase === 'run') { if (A.t > 1.2) { hover(true); A.phase = 'climb'; } }
-    else if (A.phase === 'climb') { I.lift = true; if (agl() > 11) { hover(false); A.phase = 'flip'; } }
-    else if (A.phase === 'flip') { if (roll360()) { A.phase = 'catch'; } }
-    else if (A.phase === 'catch') { if (upY() > 0.85) { hover(true); A.phase = 'down'; A.ht = 0; } }
+    else if (A.phase === 'climb') { I.lift = true; if (agl() > 11) { I.flipTap = -1; A.phase = 'flip'; A.lt = 0; } }
+    else if (A.phase === 'flip') { A.lt += dt; if (A.lt > 0.2 && !c.flipM) { A.phase = 'down'; A.ht = 0; } } // the flip hands back to the hover
     else if (A.phase === 'down') { A.ht += dt; hoverTo(PADS.hover); if (!c.air) A.phase = 'landed'; }
     else { stop(); if (A.done > 2.4) nextDemoSeg(); }
   }
@@ -4503,7 +4529,7 @@ body.touch #fdeck{top:auto;bottom:calc(max(8px,env(safe-area-inset-bottom)) + 16
   document.head.appendChild(css);
   const el = document.createElement('div'); el.id = 'fdeck';
   const dots = NOZZLE_LAYOUT.map((L, i) => { const x = -L.p[0] * 22, y = -L.p[2] * 22, col = { rear: '#ffa040', lift: '#ff2fa3', yaw: '#2ef6ff' }[L.group]; return `<circle id="fdn${i}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${L.group === 'lift' ? 6 : 4.5}" fill="${col}" opacity=".18"/>`; }).join('');
-  el.innerHTML = `<div class="md"><span>THRUSTERS</span><b id="fdMode">MANUAL</b></div>
+  el.innerHTML = `<div class="md"><span id="fdCap">THRUSTERS</span><b id="fdMode">MANUAL</b></div>
 <svg viewBox="-34 -58 68 116"><path d="M-15,-52 L15,-52 L22,-40 L23,20 L21,48 L-21,48 L-23,20 L-22,-40 Z" fill="rgba(255,255,255,.06)" stroke="rgba(255,255,255,.45)" stroke-width="1.5"/><path d="M-13,-13 L13,-13 L14,30 L-14,30 Z" fill="rgba(200,154,68,.35)"/><text x="0" y="-40" fill="rgba(255,255,255,.5)" font-size="7" text-anchor="middle">NOSE</text><text x="0" y="42" fill="rgba(255,255,255,.5)" font-size="7" text-anchor="middle">REAR</text>${dots}</svg>
 <div class="rw"><span>ALT</span><b id="fdAlt">0.0 m</b></div><div class="rw"><span>V/S</span><b id="fdVs">0.0 m/s</b></div><div class="vs"><i id="fdVsI"></i></div>
 <div class="rw"><span>N₂</span><b id="fdGas">—</b></div><div class="gas"><i id="fdGasI"></i></div>`;
@@ -4528,18 +4554,23 @@ function updateFlightDeck(dt) {
   if (hintT > 0) { hintT -= dt; if (hintT <= 0) $('fdHint').classList.remove('on'); }
   for (let i = 0; i < FD.dots.length; i++) { const n = FD.dots[i]; if (n) n.setAttribute('opacity', (0.15 + Math.min(1, c.u[i] * 1.2) * 0.85).toFixed(2)); }
   const gy = groundAt(c.x, c.z, c.y), agl = Math.max(0, c.y - gy), vs = c.air ? c.vy : 0;
-  { const t = (c.flipM ? 'FLIP' : c.hover ? 'HOVER' : c.rail ? 'SUCTION' : T.att ? 'MANUAL' : 'BOOST') + ((c.press || 1) > 1.05 ? ' · MAX' : ''); if ($('fdMode').textContent !== t) $('fdMode').textContent = t; } $('fdMode').className = c.hover ? 'hv' : '';
+  const slamM = !!(mission && mission.type === 'hoverslam'), landing = inp.retro && !slamM; // in the hoverslam BRAKE does not land for you
+  { // mode, then what the flight computer is doing right now (MAX = regulator open); with an action the mode moves into the caption
+    const raw = slamM || (S.assist === false && !c.hover);
+    const act = !c.air || c.flipM || c.rail || !T.att ? '' : landing ? 'LAND' : inp.lift ? (raw ? 'BURN' : 'CLIMB') : c.airSlide ? 'SLIDE' : c.airDrifting ? 'DRIFT' : (c.press || 1) > 1.05 ? 'MAX' : '';
+    const mode = c.flipM ? 'FLIP' : c.rail ? 'SUCTION' : !T.att ? 'BOOST' : c.hover ? 'HOVER' : !c.air ? 'DRIVE' : S.assist === false ? 'ACRO' : 'FLIGHT';
+    const cap = act ? mode : 'THRUSTERS', t = act || mode;
+    if ($('fdCap').textContent !== cap) $('fdCap').textContent = cap; if ($('fdMode').textContent !== t) $('fdMode').textContent = t; } $('fdMode').className = c.hover ? 'hv' : '';
   $('fdAlt').textContent = agl.toFixed(1) + ' m'; $('fdVs').textContent = (vs >= 0 ? '+' : '') + vs.toFixed(1) + ' m/s';
   $('fdVsI').style.left = clamp(50 + vs / 6 * 50, 2, 98) + '%';
   const cap = tankCap(), unl = S.n2 === 'unlimited', hoverS = T.lift ? c.tank / (carMass() * PHYS.G / PHYS.VE) : 0;
   $('fdGas').textContent = !T.tank ? '—' : unl ? '∞' : Math.round(c.tank) + ' kg' + (T.lift ? ` · ${hoverS.toFixed(0)}s` : '');
   $('fdGasI').style.width = (!T.tank ? 0 : unl ? 100 : c.tank / cap * 100) + '%';
-  // "LIFT NOW": full lift from here stops the fall just above the ground
+  // "LIFT NOW": lift from here stops the fall just above the ground (lit late, the regulator opens to MAX by itself)
   let cue = false;
-  if (c.air && !c.hover && !c.flipM && T.lift && vs < -2 && gasAvail() > 0 && !AUTO) {
-    const s1 = liftStopHeight(1), late = agl < s1 * 1.05 + 0.3; // too low for normal lift: it needs MAX
-    cue = agl <= s1 * 1.1 + 0.8 && (!c.fireLift || (late && (c.press || 1) < 1.5));
-    if (cue) { const t = late ? (isTouch ? 'UP NOW!' : 'F + Z · MAX!') : (isTouch ? 'UP NOW' : 'HOLD F · LIFT'); if (FD.cueTxt !== t) { FD.cueTxt = t; $('fdCue').textContent = t; } }
+  if (c.air && !c.hover && !c.flipM && T.lift && vs < -2 && gasAvail() > 0 && !AUTO && !inp.lift && !landing) {
+    cue = agl <= liftStopHeight(1) * 1.1 + 0.8;
+    if (cue) { const t = isTouch ? 'LIFT NOW' : 'HOLD F · LIFT'; if (FD.cueTxt !== t) { FD.cueTxt = t; $('fdCue').textContent = t; } }
   }
   $('fdCue').classList.toggle('on', cue);
   // predicted touchdown point (ballistic, no thrust)
@@ -4549,11 +4580,12 @@ function updateFlightDeck(dt) {
   } else FD.mark.visible = false;
   // first-time teaching moments
   if (T.lift && c.air && !AUTO) {
-    if (!c.hover && c.airT > 0.6) showHint(isTouch && !(mission && mission.type === 'hoverslam') && S.assist !== false ? `Falling? Tap ${K('F', 'UP')}: the flight computer catches you and holds your height · hold ${K('F', 'UP')} to climb · ${K('X', 'DOWN')} lands` : `Falling? Hold ${K('F', 'UP')} to fire the 4 downward nozzles, add ${K('Z', 'MAX')} for double thrust. Tap ${K('G', 'HOVER')} and the flight computer holds you steady.`, 7, 'lift');
+    const slam = mission && mission.type === 'hoverslam';
+    if (!c.hover && c.airT > 0.6 && S.assist === false && !slam) showHint(`Acro (flight assist off): the stick pitches and rolls the car · ${K('Space + A / D', 'DRIFT + stick')} yaws · ${K('F', 'LIFT')} is a raw burn · ${K('X', 'BRAKE')} lands · ${K('G', 'FLY')} holds your height`, 8, 'acro');
+    else if (!c.hover && c.airT > 0.6) showHint(slam ? `Hoverslam: one burn. Hold ${K('F', 'LIFT')} from the right height all the way down — the LIFT NOW cue tells you when.` : `In the air the stick always flies: ${K('W', 'stick ↑')} forward, ${K('A / D', 'stick ← →')} turn · hold ${K('F', 'LIFT')} to climb (it stops a fall too) · hold ${K('X', 'BRAKE')} to stop and land · tap ${K('G', 'FLY')} to hold your height`, 8, 'air2');
     if (c.airT > 1.4 && !c.flipM) showHint(`Quick flip: ${K('Q / E', '⟲ / ⟳')} pops the car up and rolls it a clean 360°, like the reveal.`, 5, 'flip');
-    if (c.hover && c.speed > 12 && FD.seen.hover && hintT <= 0) showHint(`Turn quicker: hold ${K('Z', 'MAX')} while you turn for a power turn: it banks hard on double thrust.`, 6, 'pturn');
-    if (c.hover) showHint(`HOVER: ${K('W', 'stick ↑')} flies forward on the 4 rear nozzles, level · ${K('A / D', 'stick ← →')} turns on the nose jets · let go to stop · ${K('F', 'UP')} climb · ${K('X', 'DOWN')} lands${isTouch ? '' : ' · Space + A / D slides'}`, 8, 'hover');
-    if (!c.hover && inp.lift && Math.abs(inp.thr) > 0.5 && c.airT > 0.5) showHint(`To fly forward and stay level, tap ${K('G', 'HOVER')}: then ${K('W', 'stick ↑')} pushes on the rear nozzles while the flight computer holds your height. Without hover the stick tips the car (flips).`, 7, 'fwd');
+    if ((c.hover || (inp.lift && S.assist !== false)) && c.speed > 12 && FD.seen.hover2 && hintT <= 0) showHint(`Turn quicker: hold ${K('Space', 'DRIFT')} while you turn — the nose jets swing the tail round and the car slides, then grips when you let go.`, 6, 'adrift');
+    if (c.hover) showHint(`FLY holds your height: ${K('W', 'stick ↑')} flies forward on the 4 rear nozzles · ${K('A / D', 'stick ← →')} turns on the nose jets · let go to stop · ${K('F', 'LIFT')} climbs · ${K('X', 'BRAKE')} lands · slow, ${K('Space', 'DRIFT')} + sideways slides · ${K('G', 'FLY')} again lets go`, 8, 'hover2');
   }
   if (T.boost && !c.air && c.speed > 15 && !AUTO) showHint(`${K('Shift', 'BOOST')} fires the 4 rear cold-gas nozzles (that's the 0–60 in under a second)`, 5, 'boost');
 }
@@ -4571,13 +4603,14 @@ function padAt(x, z) { for (const k in PADS) { const P = PADS[k]; if ((x - P.x) 
 // Each challenge: start pose, trim, optional target pad, per-frame logic and how it is graded.
 const SCHOOL_STEPS = [
   { t: () => `Tap ${K('G', 'FLY')} — the flight computer lifts you to 3 m and holds you there.`, ok: c => c.hover && c.air && c.y - groundAt(c.x, c.z, c.y) > 2 },
-  { t: () => `${K('W', 'stick up')} flies forward: the 4 rear nozzles push while the car stays level. ${K('A / D', 'stick sideways')} turns on the 2 nose jets; ${isTouch ? '' : 'hold Space to slide sideways instead. '}Let go and it stops. Follow the arrow and stop over pad B.`, ok: c => c.hover && c.speed < 1.5 && Math.hypot(c.x - PADS.target.x, c.z - PADS.target.z) < 5 },
-  { t: () => `Hold ${K('F', 'UP')} to climb to 12 m.`, ok: c => c.y - groundAt(c.x, c.z, c.y) > 12 },
-  { t: () => `Hold ${K('X', 'DOWN')} to land: it stops, comes down and flares just above the ground. Land on pad B.`, ok: (c, s) => s.landedOn === 'target' },
-  { t: () => `Manual flying: hold ${K('F', 'LIFT')} until the wheels leave the ground, then let go.`, ok: (c, s) => c.air && !c.hover && c.airT > 0.4 },
-  { t: () => `Hop up with ${K('F', 'LIFT')}, then tap ${K('Q / E', '⟲ / ⟳')} for a quick full roll, like the reveal (or ${K('A / D', 'steer')} to roll it yourself; let go and it levels).`, ok: (c, s) => s.rolled },
+  { t: () => `In the air the stick always flies: ${K('W', 'stick ↑')} forward on the 4 rear nozzles while the car stays level, ${K('A / D', 'stick ← →')} turns on the 2 nose jets. Let go and it stops. Follow the arrow and stop over pad B (slow, hold ${K('Space', 'DRIFT')} and push sideways to slide onto it).`, ok: c => c.hover && c.speed < 1.5 && Math.hypot(c.x - PADS.target.x, c.z - PADS.target.z) < 5 },
+  { t: () => `Hold ${K('F', 'LIFT')} to climb to 12 m.`, ok: c => c.y - groundAt(c.x, c.z, c.y) > 12 },
+  { t: () => `Hold ${K('X', 'BRAKE')} to land: it stops, comes down and flares just above the ground. Land on pad B.`, ok: (c, s) => s.landedOn === 'target' },
+  { t: () => `Hop: hold ${K('F', 'LIFT')} until the wheels leave the ground, then let go. Without ${K('G', 'FLY')} it falls back down, level, and the stick still turns it.`, ok: (c, s) => c.air && !c.hover && c.airT > 0.4 },
+  { t: () => `Hop up with ${K('F', 'LIFT')}, then tap ${K('Q / E', '⟲ / ⟳')} for a quick full roll, like the reveal. Rolls and flips only come from these buttons.`, ok: (c, s) => s.rolled },
+  { t: () => `Air drift: tap ${K('G', 'FLY')}, fly forward with ${K('W', 'stick ↑')}, then hold ${K('Space', 'DRIFT')} and turn — the nose jets swing the tail round and the car slides.`, ok: (c, s) => s.adriftT > 1 },
   { t: () => `${K('Shift', 'BOOST')} fires the 4 rear nozzles. Give it a 1-second burst.`, ok: (c, s) => s.boostT > 1 },
-  { t: () => `Thrust drift: at speed hold ${K('Space', 'DRIFT')} and steer — the side nozzles kick the tail round.`, ok: (c, s) => s.tdriftT > 1.2 }];
+  { t: () => `Thrust drift: at speed on the ground hold ${K('Space', 'DRIFT')} and steer — the side nozzles kick the tail round.`, ok: (c, s) => s.tdriftT > 1.2 }];
 const CHALLENGES = {
   school: { name: 'Flight School', col: '#2ef6ff', trim: 'rocket', at: () => [PADS.school.x, PADS.school.z, Math.PI / 2], desc: 'Learn every thruster, step by step' },
   padhop: { name: 'Pad to Pad', col: '#4dff9a', trim: 'rocket', at: () => [PADS.school.x, PADS.school.z, Math.PI / 2], pad: 'target', time: 60, desc: 'Fly 95 m from pad A and land on pad B' },
@@ -4585,7 +4618,7 @@ const CHALLENGES = {
   barge: { name: 'Sea Barge', col: '#2ef6ff', trim: 'rocket', at: () => [400, -150, Math.PI / 2], pad: 'barge', time: 75, desc: 'Cross 120 m of open water to the floating pad' },
   hoverhold: { name: 'Hover Hold', col: '#ff2fa3', trim: 'rocket', at: () => [PADS.hover.x - 30, PADS.hover.z, Math.PI / 2], time: 45, desc: 'Hold steady inside the ring for 6 seconds' },
   rings: { name: 'Ring Run', col: '#9d5cff', trim: 'rocket', at: () => [-90, -775, Math.PI / 2], time: 75, desc: 'Fly through 5 rings (each tops up 15% N₂), then land on pad H' },
-  hoverslam: { name: 'Hoverslam', col: '#ffa040', trim: 'rocket', at: () => [PADS.hover.x, PADS.hover.z, Math.PI / 2], drop: 40, pad: 'hover', time: 30, desc: `Dropped from 40 m: light ${isTouch ? 'UP' : 'F'} once and hold it to touchdown, booster-style (${isTouch ? 'it adds MAX by itself' : 'add Z for MAX'} if you light it late)` },
+  hoverslam: { name: 'Hoverslam', col: '#ffa040', trim: 'rocket', at: () => [PADS.hover.x, PADS.hover.z, Math.PI / 2], drop: 40, pad: 'hover', time: 30, desc: `Dropped from 40 m: light ${isTouch ? 'LIFT' : 'F'} once and hold it to touchdown, booster-style (lit late, the regulator opens to MAX by itself)` },
   tdrift: { name: 'Thrust Drift', col: '#ffa040', trim: 'rocket', at: () => [-150, 185, Math.PI], time: 45, desc: 'Side-nozzle drifts on the plaza — chain them' }
 };
 const RINGS = [[-60, -780, 6], [-28, -800, 9], [2, -830, 12], [-30, -862, 9], [-70, -860, 6]]; // ~245 m course: one Extended tank in hover
@@ -4648,13 +4681,13 @@ function updateChallenge(dt) {
   const tgt = m.type === 'school' ? (m.step <= 3 ? PADS.target : null) : m.type === 'rings' ? (s.ring < RINGS.length ? { x: RINGS[s.ring][0], z: RINGS[s.ring][1] } : PADS.hover) : m.type === 'hoverhold' ? PADS.hover : ch.pad ? PADS[ch.pad] : null;
   guide.visible = !!tgt && Math.hypot(c.x - (tgt ? tgt.x : 0), c.z - (tgt ? tgt.z : 0)) > 4;
   if (guide.visible) { guide.position.set(c.x, c.y + 3.4, c.z); guide.lookAt(tgt.x, c.y + 3.4, tgt.z); }
-  if (c.fireBoost && inp.boost) s.boostT += dt; if (c.thrustDrift) s.tdriftT += dt;
+  if (c.fireBoost && inp.boost) s.boostT += dt; if (c.thrustDrift) s.tdriftT += dt; if (c.air && c.airDrifting && c.driftAmt > 0.3) s.adriftT = (s.adriftT || 0) + dt;
   $('mTitle').textContent = ch.name.toUpperCase();
   if (m.type === 'school') {
     c.tank = tankCap(); // the instructor keeps the tank full during lessons
     if (c.air && Math.abs(c.rollAcc) > 5.4) s.rolled = true;
     const st = SCHOOL_STEPS[m.step];
-    if (st.ok(c, s)) { SFX.check(); m.step++; s.landedOn = null; s.boostT = 0; s.tdriftT = 0; s.rolled = false; if (m.step >= SCHOOL_STEPS.length) { endChallenge('GOLD', 3000, 'Flight School complete — you can fly the Roadster'); return; } showHint(SCHOOL_STEPS[m.step].t(), 9); }
+    if (st.ok(c, s)) { SFX.check(); m.step++; s.landedOn = null; s.boostT = 0; s.tdriftT = 0; s.adriftT = 0; s.rolled = false; if (m.step >= SCHOOL_STEPS.length) { endChallenge('GOLD', 3000, 'Flight School complete — you can fly the Roadster'); return; } showHint(SCHOOL_STEPS[m.step].t(), 9); }
     $('mInfo').textContent = `Step ${m.step + 1}/${SCHOOL_STEPS.length}`; if (hintT <= 0) showHint(SCHOOL_STEPS[m.step].t(), 9);
     return;
   }
@@ -4670,6 +4703,7 @@ function updateChallenge(dt) {
     $('mInfo').textContent = s.ring < RINGS.length ? `${left.toFixed(0)}s · ring ${s.ring + 1}/${RINGS.length}` : `${left.toFixed(0)}s · now land on pad H`;
   } else if (m.type === 'hoverslam') {
     if (c.hover) { c.hover = null; popScore('No hover in a hoverslam — one burn only', '#ff4060'); }
+    if (inp.retro && c.air && !s.noLand) { s.noLand = 1; popScore('Hoverslam: no autopilot landing — LIFT only', '#ffa040'); }
     // one continuous burn; quick feathering taps (gaps under 0.4 s) still count as the same burn
     if (c.fireLift) { if (!s.lp && (s.burns === 0 || s.offT > 0.4)) s.burns++; s.offT = 0; } else s.offT = (s.offT || 0) + dt;
     s.lp = c.fireLift;
@@ -4754,12 +4788,14 @@ updateCamera = function (dt) {
   }
   mobState();
 };
-// body classes for the thumb layout: airborne (Rocket) → GAS reads UP, BRAKE reads DOWN, DRIFT reads MAX, flips appear; hovering → HOVER glows
+// body classes for the thumb layout: airborne → BRAKE adds "▼ LAND" under its name (Rocket), GAS dims on cars without lift; hovering → FLY glows.
+// No button renames, appears or disappears in the air.
 function mobState() {
   const a = !!(car.air || car.hover), h = !!car.hover;
   if (a !== MOB.air) { MOB.air = a; document.body.classList.toggle('airborne', a); }
   if (h !== MOB.hv) { MOB.hv = h; document.body.classList.toggle('hovering', h); }
-  const jl = car.flipM ? 'FLIP!' : h ? '↑ FLY\n← → TURN' : a ? (car.trim.att ? 'TILT · ROLL' : 'AIR') : 'STEER';
+  const sl = !!(mission && mission.type === 'hoverslam'); if (sl !== MOB.sl) { MOB.sl = sl; document.body.classList.toggle('slam', sl); }
+  const jl = car.flipM ? 'FLIP!' : a ? (!car.trim.att ? 'AIR' : S.assist === false && !h ? 'TILT · ROLL' : '↑ FLY\n← → TURN') : 'STEER';
   if (jl !== MOB.jl) { MOB.jl = jl; const e = $('joyLbl'); if (e) e.textContent = jl; }
 }
 
@@ -4930,7 +4966,7 @@ function buildWorld() {
   buildComposer(); updateSky(0.016); updateEnv();
   updatePalms(1); updateTapes();
 }
-window.neonDrive = { car, W, S, ST, camera, camS, ph, AU, inp, scene, get rig() { return RIG; }, LOOP, LINEUP, STRIP, setTrim, get auto() { return AUTO; }, get mission() { return mission; }, respawnCar, startMission, enterPhoto, get heat() { return heat; }, addHeat, get mode() { return { started, paused, photo: !!photo, replay: !!replay, camMode }; } };
+window.neonDrive = { car, W, S, ST, groundAt, camera, camS, ph, AU, inp, scene, get rig() { return RIG; }, LOOP, LINEUP, STRIP, setTrim, get auto() { return AUTO; }, get mission() { return mission; }, respawnCar, startMission, enterPhoto, get heat() { return heat; }, addHeat, get mode() { return { started, paused, photo: !!photo, replay: !!replay, camMode }; } };
 let last = performance.now(), frameN = 0;
 // adaptive resolution: count missed vsyncs (not the average), remember the DPR that first caused drops so it does
 // not oscillate back into stutter, and leave a steady 30 Hz cap (iOS Low Power Mode) alone
